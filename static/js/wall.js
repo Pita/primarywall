@@ -3,9 +3,7 @@ $(document).ready(function ()
 {
   // hide the loading page
   $('#loading').hide();
-//  socket = new io.Socket();
-  socket = new io.Socket('socket.primarywall.com',{port: 1337});
-
+  socket = new io.Socket();
   socket.connect();
 
   socket.on('connect', function ()
