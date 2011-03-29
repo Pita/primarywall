@@ -318,7 +318,7 @@ function newnote(event, dontshow)
       // make edit page draggable
       $('#editpage').draggable();
       $('#editpage').draggable("option", "cursor", "hand");
-
+      $('#editpage').draggable({containment: "#values"});
       // Make first input box the focus object
       $('#editnotetitle').focus();
     }
