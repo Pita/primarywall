@@ -1,0 +1,13 @@
+Options +FollowSymlinks
+DirectoryIndex index.html
+RewriteEngine on
+RewriteBase /
+
+# If the request isn't for a static file
+RewriteCond %{REQUEST_URI} !^/static/.*$ [NC]
+# OR the request isn't for the base URL or index.html
+RewriteCond %{REQUEST_URI} !^/index.html [NC]
+RewriteCond %{REQUEST_URI} !/$ [NC]
+
+# Then rewrite it to a wall
+RewriteRule ^(.*)$ /static/wall.html
