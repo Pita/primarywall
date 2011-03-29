@@ -428,6 +428,11 @@ function post()
   var editnotecontents = $('#editnotecontents').val();
   var editnotename = $('#editnotename').val();
   var editnoteguid = $('#editnoteguid').val();
+  
+  if(editnotecontents.length > 200)
+  {
+    editnotecontents = editnotecontents.substr(0,197) + "...";
+  }
 
   // Is this a new post or a post edit?
   if (editnoteguid)
@@ -440,7 +445,10 @@ function post()
     errlog(notearray);
     // Now the UI
     $('#' + editnoteguid + ' > .notetitle').html(htmlescape(editnotetitle));
-    $('#' + editnoteguid + ' > .notecontents').html(htmlescape(editnotecontents));
+    if(editnotecontents.length == 200)
+      $('#' + editnoteguid + ' > .notecontents').html(htmlescape(editnotecontents) + "<b style='color:red'>(Text too long)</b>");
+    else
+      $('#' + editnoteguid + ' > .notecontents').html(htmlescape(editnotecontents));
     $('#' + editnoteguid + ' > .notename').html(htmlescape(editnotename));
     //send to the Server
     errlog("updating server w/ edited contents");
@@ -547,7 +555,10 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
   // Now lets append the note to the UI
   var notehtmlcont = '<div class="note" id=' + noteguid + ' style="display:none;">';
   var notehtmltitle = '<div class="notetitle">' + htmlescape(editnotetitle) + '</div>';
-  var notehtmlcontents = '<div class="notecontents">' + htmlescape(editnotecontents) + '</div>';
+  if(editnotecontents.length == 200)
+    var notehtmlcontents = '<div class="notecontents">' + htmlescape(editnotecontents) + '<b style=\'color:red\'>(Text too long)</b></div>';
+  else
+    var notehtmlcontents = '<div class="notecontents">' + htmlescape(editnotecontents) + '</div>';
   var notehtmlname = '<div class="notename">by ' + htmlescape(editnotename) + '</div>';
   var notehtmledit = '<div class="noteeditoption"><a onclick=deleteprompt("' + noteguid + '");>delete</a> | <a style="z-index:999999;" onclick=editnote("' + noteguid + '");>edit</a></div>';
   var notehtmllock = '<div class="noteeditlocked"><img src="/static/lock.png" width="50px"></div>';
