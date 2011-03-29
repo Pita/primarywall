@@ -1,0 +1,18 @@
+REQUIREMENTS
+NoteJS - http://nodejs.org/ [apt-get install nodejs]
+NPM[Node Package Manager] - http://npmjs.org [curl http://npmjs.org/install.sh | sh]
+MySQL http://mysql.com/
+
+INSTALATION
+1. apt-get install nodejs mysql-server
+2. curl http://npmjs.org/install.sh | sh
+3. npm install socket.io mysql
+4. setup a mysql database and add the table 'note' with the sql 'primarywall.sql'
+5. set your mysql settings in MySQL_config.js
+6. if you want to use bit.ly or google analytics, set your bit.ly or google-analytics key in /static/js/google-analytics.js and /static/js/bitly.js
+
+RUNNING
+1. node server.js
+
+TESTING
+1. Open your web browser and visit http://IPSERVER:1337

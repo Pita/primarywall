@@ -1,0 +1,82 @@
+<!--
+ Copyright 2011 Primary Technology Ltd
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<link REL="Shortcut Icon" HREF="http://primaryt.co.uk/favicon.ico">
+<!-- jQ & jQ UI -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
+<script src="/static/json.js"></script> <!-- for ie -->
+<script src="/socket.io/socket.io.js"></script> <!-- sockets -->
+<!-- nifty and custom JS -->
+<!-- <script src="http://tts.primaryt.co.uk/nifty/niftyplayer.js"></script> -->
+<!-- google font api -->
+<link href='http://fonts.googleapis.com/css?family=Crafty+Girls' rel='stylesheet' type='text/css'>
+<!-- css -->
+<link href='/static/styles.css' rel='stylesheet' type='text/css'>
+<Title>Primary Wall</title>
+
+<script type="text/javascript" src="/static/js/wall.js"></script>
+<script type="text/javascript" src="/static/js/bitly.js"></script>
+<script type="text/javascript" src="/static/js/google-analytics.js"></script>
+
+</head>
+
+<body onkeyup="begin()">
+<div id="loading"><div id="loadingimage">Loading<br/><img src="/static/loading.gif"><br/>Please wait<br/><br/>If you get stuck here please <a href="http://ask.primaryt.co.uk">ask for help</a></div></div>
+<div id="editpage">
+        <a class="abort" onClick="abortedit();">x</a>
+        <div class="title">Note title:<br/><input type="text" class="editable" maxlength="60" id="editnotetitle" style="width:595px;height:50px;"></div>
+        <div class="contents">Note contents:<br/><textarea class="editable" id="editnotecontents" style="width:595px;height:200px;z-index:99999;font-family:MS Shell Dlg;font-weight:80;"></textarea></div>
+        <div class="name">Your name or nickname:<br/><input type="text" id="editnotename" onkeyup="lfe(event);" maxlength="20" class="editable" style="width:595px;height:50px;z-index:999;"></div>
+	<input type="hidden" id="editnoteguid">
+        <div class="editactions"><input type="button" class="postme" value="Post me!" onclick="post()"></div>
+</div>
+
+<div id="top">
+        <input type="button" class="pwbutton" onClick="newnote(event,dontshow);" id="newnote" value="+ Add a note"> 
+	<div id="extra"><a class="hand" onClick="extradropdown('sort');">SORT</a>
+		 | <a class="hand" onClick="extradropdown('search');">SEARCH</a>
+		 | <a class="hand" onClick="extradropdown('share');">SHARE</a>
+<!--
+		 | <a class="hand" onClick="extradropdown('font');">FONT</a>
+		 | <a class="hand" onClick="extradropdown('background');">BACKGROUND</a>
+-->
+	</div>
+        <div id="logo"><a href="http://primaryt.co.uk" target="_blank" title="Primary Technology"><img src="/static/primarytlogo.png" border=0></a></div>
+<div id="extradropdown"></div>
+</div>
+
+<div id="popdown">
+        <div id="names" class="inbox"><textarea name="namesbox" id="namesbox"></textarea></div>
+        <div id="saveload" class="inbox">Easy to share URL:<br/><div id=saveurl></div></div>
+        <div id="help" class="inbox"></div>
+</div>
+
+<div id=values>
+	<div id=transoverlay>Drag the notes to move them</div>
+        <div id=superninja>Click on the screen to create a new note</div>
+</div>
+<div id=users></div>
+<div id=superninja2>You have been disconnected - Refresh your page</div>
+
+<div id=footer>PrimaryWall from Primary Technology</div>
+</body>
+</html>
+
+

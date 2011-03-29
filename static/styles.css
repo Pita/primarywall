@@ -1,0 +1,439 @@
+/*
+ * Copyright 2011 Primary Technology Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#loading
+{
+padding-top:100px;
+width:100%;
+height:100%;
+z-indeX:99999;
+position:absolute;
+background-color:#ffffff;
+}
+
+#loadingimage
+{
+margin: 0, auto;
+text-align:center;
+}
+
+body
+{
+background: url('http://primaryschoolict.com/backgrounds/rainbow.jpg');
+font-family: 'Crafty Girls', arial, serif;
+background-position: top center;
+width:100%;
+height:100%;
+margin:0;
+padding:0;
+overflow-x:hidden;
+}
+
+img
+{
+border:none;
+border-style: none;
+}
+
+a
+{
+cursor:pointer;
+cursor:hand;
+border-style: none;
+filter:alpha(opacity=70);
+-moz-opacity:0.7;
+-khtml-opacity: 0.7;
+opacity: 0.7;
+}
+
+a:hover
+{
+cursor:pointer;
+cursor:hand;
+filter:alpha(opacity=99);
+-moz-opacity:1;
+-khtml-opacity: 1;
+opacity: 1;
+}
+
+
+#top
+{
+position:absolute;
+top:0;
+left:0;
+height:50px;
+background-color:#2c729b;
+width:100%;
+}
+
+#logo
+{
+position:absolute;
+top:0;
+right:0;
+z-index:5;
+padding-top:10px;
+padding-right:10px;
+}
+
+#popdown
+{
+}
+
+#values
+{
+position:absolute;
+left:0px;
+right:0px;
+top:50px;
+width:100%;
+bottom:0px;
+z-index:-1;
+}
+
+#transoverlay
+{
+position:absolute;
+font-size:40px;
+top:200px;
+z-index:1;
+filter:alpha(opacity=30);
+-moz-opacity:0.3;
+-khtml-opacity: 0.3;
+opacity: 0.3;
+margin: 0 auto;
+width:100%;
+text-align:center;
+display:none;
+}
+
+#saveurl
+{
+display:none;
+}
+
+#names
+{
+display:none;
+}
+
+#saveload
+{
+display:none;
+}
+
+.note
+{
+z-index:99900;
+background-color:#2c729b;
+width:200px;
+min-height:100px;
+color:#ffffff;
+padding: 5px 5px 5px 5px;
+position:absolute;
+border-right: 1px #ddd solid;
+border-bottom: 1px #ddd solid;
+border-left: 1px #666 solid;
+border-top: 1px #666 solid;
+}
+
+.pwbutton
+{
+z-index:3;
+font-family: 'Crafty Girls', arial, serif;
+font-size:20px;
+position:absolute;
+left: 5px;
+top: 5px;
+width:200px;
+height:40px;
+background-color:#ffffff;
+color:#2c729b;
+}
+
+#extra
+{
+color:#ffffff;
+position:absolute;
+right:90px;
+top:25px;
+z-index:3;
+}
+
+#extradropdown
+{
+z-index:999999;
+position:absolute;
+top:50px;
+right:0;
+height:100px;
+background-color:#2c729b;
+width:500px;
+display:none;
+padding-left:5px;
+color:#ffffff;
+padding-bottom:10px;
+font-size:20px;
+text-align:center;
+}
+
+#footer
+{
+position:absolute;
+bottom:0px;
+right:0px;
+left:0px;
+background-color:#ffffff;
+text-align:right;
+padding-right:5px;
+filter:alpha(opacity=50);
+-moz-opacity:0.5;
+-khtml-opacity: 0.5;
+opacity: 0.5;
+}
+
+.biglink
+{
+font-size:46px;
+color: #2c729b;
+width:95%;
+z-index:4;
+}
+
+.hand
+{
+cursor:pointer;
+cursor:hand;
+}
+
+.yesno
+{
+z-index:3;
+font-family: 'Crafty Girls', arial, serif;
+font-size:20px;
+width:200px;
+height:40px;
+background-color:#ffffff;
+color:#2c729b;
+}
+
+#editpage
+{
+display:none;
+font-family: 'Crafty Girls', arial, serif;
+font-size:20px;
+width:610px;
+height:485px;
+color:#ffffff;
+background-color:#2c729b;
+padding: 5px 5px 5px 10px;
+z-index:999999;
+margin:0 auto;
+margin-top:65px;
+}
+
+.title
+{
+width:580px;
+}
+
+.contents
+{
+width:580px;
+}
+
+.name
+{
+width:580px;
+}
+
+.editactions
+{
+width:580px;
+}
+
+.editable
+{
+padding-left:5px;
+font-size:25px;
+}
+
+.postme
+{
+z-index:3;
+font-family: 'Crafty Girls', arial, serif;
+font-size:40px;
+width:605px;
+height:60px;
+background-color:#ffffff;
+color:#2c729b;
+cursor:pointer;
+margin-top:10px;
+cursor:hand;
+}
+
+.abort
+{
+position:relative;
+right:3px;
+top:-5px;
+float:right;
+cursor:pointer;
+cursor:hand;
+}
+
+.notetitle
+{
+background-color:#000000;
+width:190px;
+padding: 5px 5px 5px 5px;
+cursor:move;
+}
+
+.notecontents
+{
+padding: 5px 5px 25px 5px;
+word-wrap: break-word;
+}
+
+.notename
+{
+position:absolute;
+bottom:0px;
+font-size:60%;
+padding: 5px 5px 5px 5px;
+}
+
+.noteeditoption
+{
+position:absolute;
+bottom:0px;
+right:0px;
+font-size:60%;
+padding: 5px 5px 5px 5px;
+z-index:999999;
+}
+
+.noteeditlocked
+{
+display:none;
+width:200px;
+margin: 0 auto;
+text-align:center;
+padding-top:10px;
+}
+
+.deleteit
+{
+cursor:pointer;
+cursor:hand;
+display:inline;
+}
+
+.editit
+{
+display:inline;
+cursor:pointer;
+cursor:hand;
+}
+
+#superninja
+{
+position:absolute;
+font-size:40px;
+top:200px;
+z-index:1;
+filter:alpha(opacity=30);
+-moz-opacity:0.3;
+-khtml-opacity: 0.3;
+opacity: 0.3;
+margin: 0 auto;
+width:100%;
+text-align:center;
+}
+
+#users
+{
+z-index:999999;
+position:absolute;
+bottom:0;
+width:90%;
+height:40px;
+left:10px;
+}
+
+.user
+{
+display:inline;
+}
+
+.usericon
+{
+height:30px;
+opacity:.6;
+filter:alpha(opacity=60);
+-moz-opacity:0.6;
+-khtml-opacity: 0.6;
+}
+
+.usericon:hover
+{
+cursor:pointer;
+cursor:hand;
+filter:alpha(opacity=99);
+-moz-opacity:1;
+-khtml-opacity: 1;
+opacity: 1;
+}
+
+#superninja2
+{
+display:none;
+position:absolute;
+font-size:40px;
+top:200px;
+z-index:1;
+filter:alpha(opacity=30);
+-moz-opacity:0.3;
+-khtml-opacity: 0.3;
+opacity: 0.3;
+margin: 0 auto;
+width:100%;
+text-align:center;
+}
+
+#search
+{
+font-size:46px;
+width:80%;
+}
+
+#clearsearch
+{
+font-size: 46px;
+width: 60px;
+background-color:#ffffff;
+height:56px;
+padding-bottom:2px;
+border-style:none;
+cursor:pointer;
+cursor:hand;
+}
+
+#clearsearch:hover{
+color:red;
+}

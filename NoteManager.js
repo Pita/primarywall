@@ -1,0 +1,301 @@
+/*
+ * Copyright 2011 Primary Technology Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*********************************/
+/* Build up the MySQL Connection */
+/*********************************/
+var config = require("./MySQL_config");
+
+var Client = require('mysql').Client;
+var client = new Client();
+
+client.host = config.host;
+client.user = config.user;
+client.password = config.password;
+client.database = config.database;
+
+client.connect();
+
+/*********************************/
+/* Note Manager Functions        */
+/*********************************/
+
+/**
+ * Saves the cached Informations about all Notes
+ * key = guid
+ * values = wallid, title, content, author, x, y, locksession
+ */
+var notes = {};
+
+
+/**
+ * Saves all walls that are loaded in Memory
+ */
+var loadedWalls = [];
+
+/**
+ * Loads all Notes of this Wall in Memory if they not in it
+ */
+exports.ensureAllNotesOfThisWallAreLoaded = function (wallid, callback)
+{
+  var foundInLoadedWalls = false;
+  
+  for(i in loadedWalls)
+  {
+    if(loadedWalls[i] == wallid)
+    {
+      foundInLoadedWalls = true;
+      break;
+    }
+  }
+
+  if(!foundInLoadedWalls)
+  {
+    client.query("SELECT * FROM `note` WHERE  `wallid` =  ?", [wallid], function(err, results, fields)
+    {
+      if(err == null)
+      {
+        for (i in results)
+        {
+          notes[results[i].guid] = {"wallid": results[i].wallid, "title": results[i].title, 
+                                   "content": results[i].content, "author": results[i].author,
+                                   "x": results[i].x, "y": results[i].y, "locksession":null};
+        }
+        
+        loadedWalls.push(wallid);
+      }
+      else
+        console.error(err.message);
+                     
+      callback(err == null);
+    });
+  }
+  else
+  {
+    callback(true);
+  }
+}
+
+/**
+ * Flush all Notes of this Wall out of Memory
+ */
+exports.flushAllNotesOfThisWall = function (wallid)
+{
+  for( i in notes )
+  {
+    if(notes[i].wallid == wallid)
+    {
+      delete notes[i];
+    }
+  }
+  
+  for(i in loadedWalls)
+  {
+    if(loadedWalls[i] == wallid)
+    {
+      loadedWalls.splice (i,1);
+      break;
+    }
+  }
+}
+
+/**
+ * Returns all Notes from a specific Wall
+ * @return a Object with all Notes, key is guid
+ */
+exports.getAllNotesFromWall = function (wallid)
+{
+  var notesFromWall = [];
+
+  for( i in notes )
+  {
+    if(notes[i].wallid == wallid)
+    {
+      notesFromWall[i] = notes[i];
+    }
+  }
+  
+  return notesFromWall;
+}
+
+/**
+ * Removes all Locks that a sessions holts.
+ * @return a Array with the Locks that this session had. 
+ */
+exports.removeLocksFromThisSession = function (session)
+{
+  var locks = [];
+
+  for( i in notes )
+  {
+    if(notes[i].locksession == session)
+    {
+      notes[i].locksession = null;
+      locks.push(i);
+    }
+  }
+  
+  return locks;
+}
+
+/**
+ * Creates a new note
+ */
+exports.newNote = function (guid, wallid, title, content, author, x, y, callback)
+{
+  throwExceptionIfCallbackIsntOk(callback);
+
+  client.query("INSERT INTO `note` (`guid`, `title`, `content`, `author`, `x`, `y`, `wallid`) " + 
+               "VALUES (?, ?, ?, ?, ?, ?, ?)", [guid, title, content, author, x, y, wallid], function(err)
+  {
+    if(err == null)
+      notes[guid] = {"wallid": wallid, "title": title, "content": content, "author": author, "x":x, "y":y, "locksession":null};
+    else
+      console.error(err.message);
+                   
+    callback(err == null);
+  });
+}
+
+/**
+ * Move a Note to a new x and y
+ */
+exports.moveNote = function (guid, x, y, session, callback)
+{
+  throwExceptionIfGuidIsntOk(guid, session);
+  throwExceptionIfCallbackIsntOk(callback);
+
+  client.query("UPDATE `note` SET `x` = ?, `y` = ? WHERE `note`.`guid` = ?", 
+              [x, y, guid], function(err)
+  {
+    if(err == null)
+    {
+      notes[guid].x = x;
+      notes[guid].y = y;
+    }
+    else
+    {
+      console.error(err.message);
+    }
+                 
+    callback(err == null);
+  });
+}
+
+/**
+ * Sets the new Values 
+ */
+exports.editNote = function (guid, title, content, author, session, callback)
+{
+  throwExceptionIfGuidIsntOk(guid, session);
+  throwExceptionIfCallbackIsntOk(callback);
+  
+  client.query("UPDATE `note` SET `title` = ?, `content` = ?, `author` = ? WHERE `note`.`guid` = ?", 
+              [title, content, author, guid], function(err)
+  {
+    if(err == null)
+    {
+      notes[guid].title = title;
+      notes[guid].content = content;
+      notes[guid].author = author;
+    }
+    else
+    {
+      console.error(err.message);
+    }
+                 
+    callback(err == null);
+  });
+}
+
+/**
+ * Deletes a Note
+ */
+exports.deleteNote = function (guid, session, callback)
+{
+  throwExceptionIfGuidIsntOk(guid, session);
+  throwExceptionIfCallbackIsntOk(callback);
+  
+  client.query("DELETE FROM `note` WHERE `note`.`guid` = ?", 
+              [guid], function(err)
+  {
+    if(err == null)
+    {
+      delete notes[guid];
+    }
+    else
+    {
+      console.error(err.message);
+    }
+                 
+    callback(err == null);
+  });
+}
+
+/**
+ * Locks a Note
+ */
+exports.lockNote = function (guid, session)
+{
+  throwExceptionIfGuidIsntOk(guid, session);
+  
+  notes[guid].locksession = session;
+}
+
+/**
+ * Unlocks a Note
+ */
+exports.unlockNote = function (guid)
+{
+  if(notes[guid] == null)
+  {
+    // Why the elaborate string below?
+    throw "There is no Note with guid '" + guid + "'";
+  }
+  
+  if(notes[guid].locksession == null)
+  {
+    throw "The Note '" + guid + "' isn't locked'";
+  }
+  
+  notes[guid].locksession = null;
+}
+
+function throwExceptionIfCallbackIsntOk(callback)
+{
+  if(callback == null)
+  {
+    throw "You didn't set a callback Function!'"
+  }
+  
+  if(typeof callback != 'function')
+  {
+    throw "Your Callback isn't a Function!'"
+  }
+}
+
+function throwExceptionIfGuidIsntOk(guid, session)
+{
+  if(notes[guid] == null)
+  {
+    throw "There is no Note with guid " + guid;
+  }
+  
+  if(notes[guid].locksession != null && notes[guid].locksession != session)
+  {
+    throw "The Note '" + guid + "' is locked";
+  }
+}
