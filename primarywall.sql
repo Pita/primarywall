@@ -35,11 +35,11 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 CREATE TABLE IF NOT EXISTS `note` (
   `guid` varchar(30) NOT NULL COMMENT 'guid of a note',
   `title` varchar(30) NOT NULL COMMENT 'title given to the note',
-  `content` varchar(30) NOT NULL COMMENT 'contents of the note',
+  `content` varchar(200) NOT NULL COMMENT 'contents of the note',
   `author` varchar(20) NOT NULL COMMENT 'author of the note',
   `x` int(4) NOT NULL COMMENT 'x coordinate of the note',
   `y` int(4) NOT NULL COMMENT 'y coordinate of the note',
-  `wallid` varchar(40) NOT NULL COMMENT 'id of the wall this note exists on',
+  `wallid` varchar(80) NOT NULL COMMENT 'id of the wall this note exists on',
   PRIMARY KEY (`guid`),
   KEY `wallid` (`wallid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
