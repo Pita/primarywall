@@ -3,13 +3,18 @@ $(document).ready(function ()
 {
   // hide the loading page
   $('#loading').hide();
-  socket = new io.Socket();
+//  socket = new io.Socket();
+  socket = new io.Socket('socket.primarywall.com',{port: 1337});
+
   socket.connect();
 
   socket.on('connect', function ()
   {
     var url = document.URL.split("?")[0];
     var wallid = url.substring(url.lastIndexOf("/") + 1);
+    // hide the connection warning and show first helper
+    $('#newconnect').hide();
+    $('#superninja').show();
     socket.send(
     {
       type: "handshake",
@@ -113,7 +118,7 @@ $(document).ready(function ()
 });
 
 // Should we debug?
-var debug = 1;
+var debug = 0;
 
 // For now we initialize a clear array bceause we don't have any server side data 
 var notearray = {};
