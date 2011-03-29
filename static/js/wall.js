@@ -667,10 +667,18 @@ function extradropdown(request)
   case 'search':
     if (!savestring) savestring = "";
 
-    dropdownvalue = "Search for a note<br><input type='text' id='search' onkeyup='search()' value=" + savestring + "><button type='button' onclick=\"$('.note').css('opacity', '1');$('#search').val('');savestring=''\" id='clearsearch'>x</button>";
+    dropdownvalue = "Search for a note<br><input type='text' id='search' onkeyup='search()' value=" + savestring + "><button type='button' onclick='clearsearch()' id='clearsearch'>x</button>";
     break;
   }
   $('#extradropdown').html(dropdownvalue);
+}
+
+function clearsearch()
+{
+  $('.note').css('opacity', '1');
+  $('#search').val('');
+  savestring='';
+  $('#extradropdown').hide();
 }
 
 var savestring = "";
