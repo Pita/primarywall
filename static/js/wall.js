@@ -87,6 +87,10 @@ $(document).ready(function ()
       $('#' + obj.data.guid + ' > .notetitle').html(htmlescape(obj.data.title));
       $('#' + obj.data.guid + ' > .notecontents').html(htmlescape(obj.data.content));
       $('#' + obj.data.guid + ' > .notename').html(htmlescape(obj.data.author));
+      
+      notearray[obj.data.guid].title = obj.data.title;
+      notearray[obj.data.guid].contents = obj.data.content;
+      notearray[obj.data.guid].notename = obj.data.author;
     }
 
     // user count
