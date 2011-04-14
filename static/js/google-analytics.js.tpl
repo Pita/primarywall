@@ -8,3 +8,6 @@
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
+function send_ga_event(event, value) {
+  _gat._getTrackerByName()._trackEvent(event, value);
+}

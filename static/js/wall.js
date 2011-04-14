@@ -471,6 +471,9 @@ function post()
   else
   {
     // Create a new post
+    if(window.send_ga_event) {
+		send_ga_event('new-post', editnotetitle);
+	}
     newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY);
     // tool tip for how to create a new note
     $('#superninja').fadeOut('slow');
