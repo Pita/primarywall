@@ -1,9 +1,9 @@
 REQUIREMENTS
-NoteJS - http://nodejs.org/ [apt-get install nodejs]
+NodeJS - http://nodejs.org/ [apt-get install nodejs]
 NPM[Node Package Manager] - http://npmjs.org [curl http://npmjs.org/install.sh | sh]
 MySQL http://mysql.com/
 
-INSTALATION
+INSTALLATION
 1. apt-get install nodejs mysql-server
 2. curl http://npmjs.org/install.sh | sh
 3. npm install socket.io mysql
@@ -16,4 +16,4 @@ RUNNING
 1. node server.js
 
 TESTING
-1. Open your web browser and visit http://IPSERVER:1337
+1. Open your web browser and visit http://localhost:1337

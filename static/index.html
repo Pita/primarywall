@@ -31,6 +31,15 @@
 <script type="text/javascript" src="/static/js/jquery.easing.1.3.js"></script>
 <script type="text/javascript" src="/static/js/animate-menu.js"></script>
 <script type="text/javascript" src="/static/js/load-content.js"></script>
+<script type="text/javascript" src="/static/js/google-analytics.js"></script>
+<script type="text/javascript">
+function newwall() {
+	if(window.send_ga_event) {
+		send_ga_event('new-wall', '');
+	}
+	location.href='/newwall';
+}
+</script>
 <Title>PrimaryWall - Web based sticky notes for schools</title>
 </head>
 <body>
@@ -46,7 +55,7 @@
  		</div>
  	<div id="mainlinks">
  		<div id="blurb">PrimaryWall is a web-based sticky note tool designed for schools that allows pupils and teachers to work together in real-time</div>
- 		<button class="button" onClick="location.href='/newwall'">Create new wall                
+ 		<button class="button" onClick="newwall();">Create new wall                
  			<div id="noreg">No sign up or registration required</div>
  		</button>
  	</div>
