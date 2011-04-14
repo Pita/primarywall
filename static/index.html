@@ -33,7 +33,9 @@
 <script type="text/javascript" src="/static/js/google-analytics.js"></script>
 <script type="text/javascript">
 function newwall() {
-	send_ga_event('new-wall', '');
+	if(window.send_ga_event) {
+		send_ga_event('new-wall', '');
+	}
 	location.href='/newwall';
 }
 </script>
