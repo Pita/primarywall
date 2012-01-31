@@ -4,13 +4,12 @@ NPM[Node Package Manager] - http://npmjs.org [curl http://npmjs.org/install.sh |
 MySQL http://mysql.com/
 
 INSTALLATION
-1. apt-get install mysql-server
+1. apt-get install mysql-server libssl-dev build-essential
 2. install the latest nodejs from http://nodejs.org
-3. curl http://npmjs.org/install.sh | sh
-4. npm install socket.io mysql
-5. setup a mysql database and add the table 'note' with the sql 'primarywall.sql'
-6. copy MySQL_config.js.tpl to MySQL_config.js and set your mysql settings
-7. if you want to use bit.ly or google analytics, set your bit.ly or google-analytics key in /static/js/google-analytics.js and
+3. npm install socket.io mysql
+4. setup a mysql database and add the table 'note' with the sql 'primarywall.sql'
+5. copy MySQL_config.js.tpl to MySQL_config.js and set your mysql settings
+6. if you want to use bit.ly or google analytics, set your bit.ly or google-analytics key in /static/js/google-analytics.js and
 /static/js/bitly.js. To do that, you have to copy the .tpl file
 
 RUNNING
