@@ -28,7 +28,7 @@ client.user = config.user;
 client.password = config.password;
 client.database = config.database;
 
-client.connect();
+var client = require('mysql').createClient({'host':config.host,'port':3306,'user':config.user,'password':config.password,'database':config.database});
 
 /*********************************/
 /* Note Manager Functions        */
