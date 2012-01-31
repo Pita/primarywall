@@ -116,11 +116,13 @@ function requestLog(code, path, desc)
   console.log(code +", " + path + ", " + desc);
 }
 
-var io = io.listen(server);
+ var io = io.listen(server);
+//var socket = io.connect();
+
 var messageHandler = require("./MessageHandler");
 messageHandler.setSocketIO(io);
 
-io.on('connection', function(client){
+io.sockets.on('connection', function(client){
   try{
     messageHandler.handleConnect(client);
   }catch(e){console.error(e);}

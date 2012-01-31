@@ -44,25 +44,25 @@ exports.handleConnect = function(client)
 exports.handleDisconnect = function(client)
 {
   //remove all locks that this user is holding and broadcast the unlocks
-  var locks = NoteManager.removeLocksFromThisSession(client.sessionId);
+  var locks = NoteManager.removeLocksFromThisSession(client.sid);
   for(i in locks)
   {
     broadcastToTheOtherOnTheWall(client, {type:"unlock", data:locks[i]});
   }
   
   //save the wall of this session before we deleting the entry
-  var wallid = session2wall[client.sessionId];
+  var wallid = session2wall[client.sid];
   
   //Broadcast the new user_count
   broadcastToTheOtherOnTheWall(client, {type:"user_count", data: wall2sessions[wallid].length-1});
   
   //delete the session2wall entry
-  delete session2wall[client.sessionId];
+  delete session2wall[client.sid];
   
   //Search in the wall2sessionarray for this session and delete it
   for(i in wall2sessions[wallid])
   {
-    if(wall2sessions[wallid][i] == client.sessionId)
+    if(wall2sessions[wallid][i] == client.sid)
     {
       wall2sessions[wallid].splice(i,1);
       break;
@@ -147,10 +147,10 @@ function handleHandshake(client, message)
   wallid = message.data.wallid;
   
   //Save relation between Wall and Session
-  session2wall[client.sessionId] = wallid;
+  session2wall[client.sid] = wallid;
   if(wall2sessions[wallid] == null)
     wall2sessions[wallid] = [];
-  wall2sessions[wallid].push(client.sessionId);
+  wall2sessions[wallid].push(client.sid);
       
   //Tell everybody about the user count
   var msg = {type:"user_count", data: wall2sessions[wallid].length};
@@ -189,7 +189,7 @@ function handleHandshake(client, message)
  */
 function handleLock(client, message)
 {
-  NoteManager.lockNote(message.data, client.sessionId);
+  NoteManager.lockNote(message.data, client.sid);
   
   broadcastToTheOtherOnTheWall(client, message);
 }
@@ -234,7 +234,7 @@ function handleNew(client, message)
     throw "New Message have no y";
   }
   
-  var wallid = session2wall[client.sessionId];
+  var wallid = session2wall[client.sid];
   
   NoteManager.newNote (message.data.guid, wallid, message.data.title, message.data.content, message.data.author, message.data.x, message.data.y, function(success){
     if(!success)
@@ -252,7 +252,7 @@ function handleNew(client, message)
  */
 function handleDelete(client, message)
 {
-  NoteManager.deleteNote (message.data, client.sessionId, function(success){
+  NoteManager.deleteNote (message.data, client.sid, function(success){
     if(!success)
     {
       client.disconnect();
@@ -285,7 +285,7 @@ function handleEdit(client, message)
     throw "Edit Message have no author";
   }
   
-  NoteManager.editNote (message.data.guid, message.data.title, message.data.content, message.data.author, client.sessionId, function(success){
+  NoteManager.editNote (message.data.guid, message.data.title, message.data.content, message.data.author, client.sid, function(success){
     if(!success)
     {
       client.disconnect();
@@ -314,7 +314,7 @@ function handleMove(client, message)
     throw "Move Message have no y";
   }
   
-  NoteManager.moveNote (message.data.guid, message.data.x, message.data.y, client.sessionId, function(success){
+  NoteManager.moveNote (message.data.guid, message.data.x, message.data.y, client.sid, function(success){
     if(!success)
     {
       client.disconnect();
@@ -330,11 +330,11 @@ function handleMove(client, message)
  */
 function broadcastToTheOtherOnTheWall(client, message)
 {
-  var wallid = session2wall[client.sessionId];
+  var wallid = session2wall[client.sid];
   
   for(i in wall2sessions[wallid])
   {
-    if(wall2sessions[wallid][i] != client.sessionId)
+    if(wall2sessions[wallid][i] != client.sid)
     {
       socketio.clients[wall2sessions[wallid][i]].send(message);
     }
