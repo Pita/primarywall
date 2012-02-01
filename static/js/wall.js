@@ -31,7 +31,7 @@ $(document).ready(function ()
     // hide the connection warning and show first helper
     $('#newconnect').hide();
     $('#superninja').show();
-    socket.send(
+    socket.json.send(
     {
       type: "handshake",
       data: {
@@ -352,7 +352,7 @@ function deleteprompt(noteguid)
   errlog("Dont show before time out is " + dontshow);
   setTimeout("dontshow = 0", 2000);
   errlog("Dont show after timeout is " + dontshow);
-  socket.send(
+  socket.json.send(
   {
     type: "lock",
     "data": noteguid
@@ -370,7 +370,7 @@ function dontdelete(noteguid)
   errlog("Dont show after timeout is " + dontshow);
   $('#' + noteguid + ' > .noteeditoption').html(notehtmledit);
   $('#' + noteguid + ' > .notename').show();
-  socket.send(
+  socket.json.send(
   {
     type: "unlock",
     "data": noteguid
@@ -382,7 +382,7 @@ function deletenote(noteguid)
   deletefunc(noteguid);
   $('#' + noteguid).hide("explode", 1000);
   //Send new Position to the Server
-  socket.send(
+  socket.json.send(
   {
     type: "delete",
     "data": noteguid
@@ -420,7 +420,7 @@ function deletefunc(noteguid)
 
 function editnote(noteguid)
 {
-  socket.send(
+  socket.json.send(
   {
     type: "lock",
     "data": noteguid
@@ -483,12 +483,12 @@ function post()
       content: editnotecontents,
       author: editnotename
     };
-    socket.send(
+    socket.json.send(
     {
       "type": "edit",
       "data": data
     });
-    socket.send(
+    socket.json.send(
     {
       type: "unlock",
       "data": editnoteguid
@@ -562,7 +562,7 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
       y: mouseY
     };
 
-    socket.send(
+    socket.json.send(
     {
       "type": "new",
       "data": data
@@ -622,7 +622,7 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
       //errlog({"ui":ui});
       //errlog({"event.target.id":event.target.id});
       // tell teh server to lock teh note
-      socket.send(
+      socket.json.send(
       {
         type: "lock",
         "data": event.target.id
@@ -648,12 +648,12 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
         x: notearray[noteguid].x,
         y: notearray[noteguid].y
       };
-      socket.send(
+      socket.json.send(
       {
         type: "move",
         "data": data
       });
-      socket.send(
+      socket.json.send(
       {
         type: "unlock",
         "data": noteguid
@@ -784,7 +784,7 @@ function sort()
       "x": noteX,
       "y": noteY
     };
-    socket.send(
+    socket.json.send(
     {
       type: "move",
       "data": data
@@ -807,7 +807,7 @@ function abortedit()
 {
   var editnoteguid = $('#editnoteguid').val();
   $('#editpage').hide();
-  socket.send(
+  socket.json.send(
   {
     type: "unlock",
     "data": editnoteguid

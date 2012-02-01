@@ -155,7 +155,7 @@ function handleHandshake(client, message)
   //Tell everybody about the user count
   var msg = {type:"user_count", data: wall2sessions[wallid].length};
   broadcastToTheOtherOnTheWall(client, msg);
-  client.send(msg);
+  client.json.send(msg);
   
   NoteManager.ensureAllNotesOfThisWallAreLoaded(wallid, function(success)
   {
@@ -179,7 +179,7 @@ function handleHandshake(client, message)
         locked: notes[i].locksession == null ? false : true
       };
       
-      client.send({"type": "new", "data": data});
+      client.json.send({"type": "new", "data": data});
     }
   });
 }
@@ -336,7 +336,7 @@ function broadcastToTheOtherOnTheWall(client, message)
   {
     if(wall2sessions[wallid][i] != client.sid)
     {
-      socketio.clients[wall2sessions[wallid][i]].send(message);
+      socketio.clients[wall2sessions[wallid][i]].json.send(message);
     }
   }
 }
