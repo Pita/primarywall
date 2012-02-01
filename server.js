@@ -116,8 +116,8 @@ function requestLog(code, path, desc)
   console.log(code +", " + path + ", " + desc);
 }
 
- var io = io.listen(server);
-//var socket = io.connect();
+//var io = io.listen(server);
+var io = require('socket.io').listen(server)
 
 var messageHandler = require("./MessageHandler");
 messageHandler.setSocketIO(io);
