@@ -50,7 +50,7 @@ server = http.createServer(function(req, res){
     }
   }
 });
-server.listen(1337);
+server.listen(80);
 
 function randomWallName() {
 	var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
@@ -116,11 +116,13 @@ function requestLog(code, path, desc)
   console.log(code +", " + path + ", " + desc);
 }
 
-var io = io.listen(server);
+//var io = io.listen(server);
+var io = require('socket.io').listen(server)
+
 var messageHandler = require("./MessageHandler");
 messageHandler.setSocketIO(io);
 
-io.on('connection', function(client){
+io.sockets.on('connection', function(client){
   try{
     messageHandler.handleConnect(client);
   }catch(e){console.error(e);}
