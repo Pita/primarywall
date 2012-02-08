@@ -4,8 +4,8 @@ NPM[Node Package Manager] - http://npmjs.org [curl http://npmjs.org/install.sh |
 MySQL http://mysql.com/
 
 INSTALLATION
-1. apt-get install nodejs mysql-server
-2. curl http://npmjs.org/install.sh | sh
+1. apt-get install mysql-server libssl-dev build-essential
+2. install the latest nodejs from http://nodejs.org
 3. npm install socket.io mysql
 4. setup a mysql database and add the table 'note' with the sql 'primarywall.sql'
 5. copy MySQL_config.js.tpl to MySQL_config.js and set your mysql settings

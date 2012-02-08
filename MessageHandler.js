@@ -44,25 +44,25 @@ exports.handleConnect = function(client)
 exports.handleDisconnect = function(client)
 {
   //remove all locks that this user is holding and broadcast the unlocks
-  var locks = NoteManager.removeLocksFromThisSession(client.sessionId);
+  var locks = NoteManager.removeLocksFromThisSession(client.id);
   for(i in locks)
   {
     broadcastToTheOtherOnTheWall(client, {type:"unlock", data:locks[i]});
   }
   
   //save the wall of this session before we deleting the entry
-  var wallid = session2wall[client.sessionId];
+  var wallid = session2wall[client.id];
   
   //Broadcast the new user_count
   broadcastToTheOtherOnTheWall(client, {type:"user_count", data: wall2sessions[wallid].length-1});
   
   //delete the session2wall entry
-  delete session2wall[client.sessionId];
+  delete session2wall[client.id];
   
   //Search in the wall2sessionarray for this session and delete it
   for(i in wall2sessions[wallid])
   {
-    if(wall2sessions[wallid][i] == client.sessionId)
+    if(wall2sessions[wallid][i] == client.id)
     {
       wall2sessions[wallid].splice(i,1);
       break;
@@ -88,7 +88,9 @@ exports.handleMessage = function(client, message)
 {
   //Message have always two attributes, type and data
   //type can be handshake, lock, unlock, new, delete, edit, move
-   
+
+  // console.log(client);
+  // console.log("FIN");   
   console.log(message);
    
   if(message.type == null)
@@ -147,15 +149,16 @@ function handleHandshake(client, message)
   wallid = message.data.wallid;
   
   //Save relation between Wall and Session
-  session2wall[client.sessionId] = wallid;
+  session2wall[client.id] = wallid;
+  console.log("saved "+client.id+" into "+wallid);
   if(wall2sessions[wallid] == null)
     wall2sessions[wallid] = [];
-  wall2sessions[wallid].push(client.sessionId);
+  wall2sessions[wallid].push(client.id);
       
   //Tell everybody about the user count
   var msg = {type:"user_count", data: wall2sessions[wallid].length};
   broadcastToTheOtherOnTheWall(client, msg);
-  client.send(msg);
+  client.json.send(msg);
   
   NoteManager.ensureAllNotesOfThisWallAreLoaded(wallid, function(success)
   {
@@ -179,7 +182,7 @@ function handleHandshake(client, message)
         locked: notes[i].locksession == null ? false : true
       };
       
-      client.send({"type": "new", "data": data});
+      client.json.send({"type": "new", "data": data});
     }
   });
 }
@@ -189,7 +192,7 @@ function handleHandshake(client, message)
  */
 function handleLock(client, message)
 {
-  NoteManager.lockNote(message.data, client.sessionId);
+  NoteManager.lockNote(message.data, client.id);
   
   broadcastToTheOtherOnTheWall(client, message);
 }
@@ -234,7 +237,7 @@ function handleNew(client, message)
     throw "New Message have no y";
   }
   
-  var wallid = session2wall[client.sessionId];
+  var wallid = session2wall[client.id];
   
   NoteManager.newNote (message.data.guid, wallid, message.data.title, message.data.content, message.data.author, message.data.x, message.data.y, function(success){
     if(!success)
@@ -252,7 +255,7 @@ function handleNew(client, message)
  */
 function handleDelete(client, message)
 {
-  NoteManager.deleteNote (message.data, client.sessionId, function(success){
+  NoteManager.deleteNote (message.data, client.id, function(success){
     if(!success)
     {
       client.disconnect();
@@ -285,7 +288,7 @@ function handleEdit(client, message)
     throw "Edit Message have no author";
   }
   
-  NoteManager.editNote (message.data.guid, message.data.title, message.data.content, message.data.author, client.sessionId, function(success){
+  NoteManager.editNote (message.data.guid, message.data.title, message.data.content, message.data.author, client.id, function(success){
     if(!success)
     {
       client.disconnect();
@@ -314,7 +317,7 @@ function handleMove(client, message)
     throw "Move Message have no y";
   }
   
-  NoteManager.moveNote (message.data.guid, message.data.x, message.data.y, client.sessionId, function(success){
+  NoteManager.moveNote (message.data.guid, message.data.x, message.data.y, client.id, function(success){
     if(!success)
     {
       client.disconnect();
@@ -330,13 +333,17 @@ function handleMove(client, message)
  */
 function broadcastToTheOtherOnTheWall(client, message)
 {
-  var wallid = session2wall[client.sessionId];
-  
+  // console.log("CLIENT DATA:");
+  // console.log(client);
+  var wallid = session2wall[client.id];
   for(i in wall2sessions[wallid])
   {
-    if(wall2sessions[wallid][i] != client.sessionId)
+//    console.log("JAM");
+    console.log(wall2sessions[wallid][i]);
+    if(wall2sessions[wallid][i] != client.id) // broadcast to everyone except the creator
     {
-      socketio.clients[wall2sessions[wallid][i]].send(message);
+// console.log("broadcasting");
+      socketio.clients[wall2sessions[wallid][i]].json.send(message);
     }
   }
 }
