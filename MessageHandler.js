@@ -343,7 +343,7 @@ function broadcastToTheOtherOnTheWall(client, message)
     if(wall2sessions[wallid][i] != client.id) // broadcast to everyone except the creator
     {
 // console.log("broadcasting");
-      socketio.clients[wall2sessions[wallid][i]].json.send(message);
+      socketio.sockets.sockets[wall2sessions[wallid][i]].json.send(message);
     }
   }
 }
