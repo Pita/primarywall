@@ -380,10 +380,6 @@ function newnote(event, dontshow)
       $('#editnotecontents').val("");
       $('#editnoteguid').val("");
       $('#editnotecolor').val("");
-/*      if(event){
-        $('#editnotetitle').val(event);
-      }
-*/
       if(userName){ // if a username has been passed as a parameter
         $('#editnotename').val(userName);
       }
@@ -418,13 +414,11 @@ function newnote(event, dontshow)
         $('#editpage').draggable({containment: "#values"});
         // Make first input box the focus object
         var input = $('#editnotetitle');
+        input.focus();
+        input.val(''); 
         if(event){
           input.val(event);
         }
-        input.focus().val(input.val());        
-        input.val(''); 
-        input.val(event);
-        // $('#editnotetitle').focus();
       }
     }
   }
