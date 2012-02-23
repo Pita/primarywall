@@ -24,6 +24,14 @@ var userName = false;
 // Socket IO w/ lovely fall back I choo choo choose you.
 $(document).ready(function ()
 {
+
+  // stop firefox breaking sockets on escape key...
+  $(this).keypress(function(e){ 
+        if(e.keyCode == 27){ 
+            return false; 
+        } 
+    }); 
+
   // hide the loading page
   $('#loading').hide();
   socket = io.connect();
@@ -372,7 +380,10 @@ function newnote(event, dontshow)
       $('#editnotecontents').val("");
       $('#editnoteguid').val("");
       $('#editnotecolor').val("");
-
+/*      if(event){
+        $('#editnotetitle').val(event);
+      }
+*/
       if(userName){ // if a username has been passed as a parameter
         $('#editnotename').val(userName);
       }
@@ -406,7 +417,14 @@ function newnote(event, dontshow)
         $('#editpage').draggable("option", "cursor", "hand");
         $('#editpage').draggable({containment: "#values"});
         // Make first input box the focus object
-        $('#editnotetitle').focus();
+        var input = $('#editnotetitle');
+        if(event){
+          input.val(event);
+        }
+        input.focus().val(input.val());        
+        input.val(''); 
+        input.val(event);
+        // $('#editnotetitle').focus();
       }
     }
   }
@@ -671,10 +689,12 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
   // Now lets append the note to the UI
   var notehtmlcont = '<div class="note" id=' + noteguid + ' style="display:none;background-color:'+ color + '">';
   var notehtmltitle = '<div class="notetitle">' + htmlescape(editnotetitle) + '</div>';
-  if(editnotecontents.length == 200)
+  if(editnotecontents.length == 200){
     var notehtmlcontents = '<div class="notecontents">' + htmlescape(editnotecontents) + '<b style=\'color:red\'>(Text too long)</b></div>';
-  else
+  }
+  else{
     var notehtmlcontents = '<div class="notecontents">' + htmlescape(editnotecontents) + '</div>';
+  }
   var notehtmlname = '<div class="notename">by ' + htmlescape(editnotename) + '</div>';
   var notehtmledit = '<div class="noteeditoption"><a onclick=deleteprompt("' + noteguid + '");>delete</a> | <a style="z-index:999999;" onclick=editnote("' + noteguid + '");>edit</a></div>';
   var notehtmllock = '<div class="noteeditlocked"><img src="/static/lock.png" width="50px"></div>';
@@ -964,18 +984,20 @@ function abortedit()
   });
 }
 
-function begin(event)
+function begin()
 {
-  if ($('#editpage').is(":visible") || ($('#extradropdown').is(":visible")))
-  {
-    errlog("Not displaying new note because new note dialogue is visible");
-  }
-  else
-  {
-    errlog("Making new note due to new keystroke");
-    var event = "foo";
-    newnote(event, dontshow);
-  }
+  $("body").keypress(function(event){
+    if ($('#editpage').is(":visible") || ($('#extradropdown').is(":visible"))){
+      errlog("Not displaying new note because new note dialogue is visible");
+    }
+    else{
+      var charCode = String.fromCharCode(event.charCode);
+      errlog("Making new note due to new keystroke");
+      console.log(charCode);
+      var event = charCode;
+      newnote(event, dontshow);
+    }
+  });
 }
 
 // listen for enter in editnotename
