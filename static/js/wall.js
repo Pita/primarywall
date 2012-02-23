@@ -531,7 +531,7 @@ function post()
   var editnotename = $('#editnotename').val();
   var editnoteguid = $('#editnoteguid').val();
   var editnotecolor = editcolor;
-  
+  console.log(editcolor);  
   if(editnotecontents.length > 200)
   {
     editnotecontents = editnotecontents.substr(0,197) + "...";
@@ -582,7 +582,7 @@ function post()
     if(window.send_ga_event) {
       send_ga_event('new-post', editnotetitle);
     }
-    newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY);
+    newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, false, editcolor);
     // tool tip for how to create a new note
     $('#superninja').fadeOut('slow');
     // Show the tip for how to drag
