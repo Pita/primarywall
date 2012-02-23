@@ -676,6 +676,26 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
           "data": event.target.id
         });
       },
+      drag: function (event, ui)
+      {
+        newY = ui.position.top;
+        newX = ui.position.left;
+        noteguid = ui.helper.context.id;
+        // Detect if we are near the bin..  If so panic!
+        // get x and y co-ordinate of bin.
+        var binY = $('#bin').position().top;
+        var binX = $('#bin').position().left;
+        var noteHeight = $("#"+noteguid).css("height").replace("px",""); // get teh note Height
+        noteHeight = parseInt(noteHeight); // Turn a string into an int
+        var newYBinDetect = newY +noteHeight; // add the noteheight to the Y coord
+        var newXBinDetect = newX +200;
+        if(newYBinDetect > binY && newXBinDetect > binX){
+           $('#binImage').height("80px");
+        }
+        else{
+          $('#binImage').height("60px");
+        }
+      },
       stop: function (event, ui)
       {
         newY = ui.position.top;
@@ -685,28 +705,62 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
         // noteguid should be the div id of the div we just moved
         noteguid = ui.helper.context.id;
         notearray[noteguid].y = Math.round(newY / scale);
-       notearray[noteguid].x = Math.round(newX / scale);
+        notearray[noteguid].x = Math.round(newX / scale);
         errlog("New drag Y is " + newY);
-       errlog("New drag X is " + newX);
+        errlog("New drag X is " + newX);
         errlog(notearray);
   
-        //Send new Position to the Server
-        var data = {
-          guid: noteguid,
-          x: notearray[noteguid].x,
-          y: notearray[noteguid].y
-        };
-        socket.json.send(
+        // Collision detection for Bin
+ 
+        // get x and y co-ordinate of bin.
+        var binY = $('#bin').position().top;
+        var binX = $('#bin').position().left;
+
+        // Because the note top loeft corner might not actually be in the bin we need to add 100px to the X and 50px to the Y
+        var noteHeight = $("#"+noteguid).css("height").replace("px",""); // get teh note Height
+        noteHeight = parseInt(noteHeight); // Turn a string into an int
+
+        var newYBinDetect = newY +noteHeight; // add the noteheight to the Y coord
+        // There is a bug here, we need to get the actual height of the note, not an assumed height
+        var newXBinDetect = newX +200;
+
+        // next we need to know if the new X AND Y are greater than the X and Y of the bin
+        /* Leave in for bin debug */
+        /*
+        console.log("NEW positions");
+        console.log("newX:" +newXBinDetect + " AND newY:" +newYBinDetect);
+        console.log("BIN positions");
+        console.log("binX:" +binX + " AND binY:" +binY);
+        */
+        /* End of bin debug */
+
+        if(newYBinDetect > binY && newXBinDetect > binX){
+          // console.log("im in the bin");
+          deletenote(notearray[noteguid].guid);
+          $('#binImage').height("60px");
+        }
+        else
         {
-          type: "move",
-          "data": data
-        });
-        socket.json.send(
-        {
-          type: "unlock",
-         "data": noteguid
-        });
-        $('#transoverlay').fadeOut('slow');
+        // we aren't deleting the note we are sending an update
+
+          //Send new Position to the Server
+          var data = {
+            guid: noteguid,
+            x: notearray[noteguid].x,
+            y: notearray[noteguid].y
+          };
+          socket.json.send(
+          {
+            type: "move",
+            "data": data
+         });
+          socket.json.send(
+          {
+            type: "unlock",
+           "data": noteguid
+          });
+          $('#transoverlay').fadeOut('slow');
+        }
       },
       containment: "#values"
     });
