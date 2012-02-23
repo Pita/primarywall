@@ -580,6 +580,10 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
   errlog("Mouse X is " + mouseX);
   errlog("Mouse Y is " + mouseY);
 
+  if(!color){
+    var color = randomNoteColor();
+  }
+
   // if no name was given then set it as anonymous
   if (!editnotename)
   {
@@ -607,7 +611,8 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
       content: editnotecontents,
       author: editnotename,
       x: mouseX,
-      y: mouseY
+      y: mouseY,
+      y: color
     };
 
     socket.json.send(
@@ -626,10 +631,13 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
   notearray[noteguid].notename = editnotename;
   notearray[noteguid].x = Math.round(mouseX / scale);
   notearray[noteguid].y = Math.round(mouseY / scale);
+  if(color){
+    notearray[noteguid].color = color;
+  }
   errlog(notearray);
 
   // Now lets append the note to the UI
-  var notehtmlcont = '<div class="note" id=' + noteguid + ' style="display:none;">';
+  var notehtmlcont = '<div class="note" id=' + noteguid + ' style="display:none;background-color:'+ color + '">';
   var notehtmltitle = '<div class="notetitle">' + htmlescape(editnotetitle) + '</div>';
   if(editnotecontents.length == 200)
     var notehtmlcontents = '<div class="notecontents">' + htmlescape(editnotecontents) + '<b style=\'color:red\'>(Text too long)</b></div>';
