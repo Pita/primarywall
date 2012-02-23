@@ -4,16 +4,18 @@ NPM[Node Package Manager] - http://npmjs.org [curl http://npmjs.org/install.sh |
 MySQL http://mysql.com/
 
 INSTALLATION
-1. apt-get install mysql-server libssl-dev build-essential
+Debian/Ubuntu:
+1. # apt-get install mysql-server libssl-dev build-essential
 2. install the latest nodejs from http://nodejs.org
-3. npm install socket.io mysql
-4. setup a mysql database and add the table 'note' with the sql 'primarywall.sql'
-5. copy MySQL_config.js.tpl to MySQL_config.js and set your mysql settings
-6. if you want to use bit.ly or google analytics, set your bit.ly or google-analytics key in /static/js/google-analytics.js and
-/static/js/bitly.js. To do that, you have to copy the .tpl file
+3. # npm install socket.io mysql
+4. Setup a mysql database and add the table 'note' with the sql 'primarywall.sql'
+5. Copy MySQL_config.js.tpl to MySQL_config.js and set your mysql settings
+6. If you want to use bit.ly or google analytics, set your bit.ly or google-analytics key in /static/js/google-analytics.js and /static/js/bitly.js. To do that, you have to copy the .tpl file
+7. node server.js
+8. Connect to SERVER-IP-ADDRESS port 80 in your web browser IE http://192.168.1.2
 
 RUNNING
 1. node server.js
 
 TESTING
-1. Open your web browser and visit http://localhost:1337
+1. Open your web browser and visit http://localhost:80
