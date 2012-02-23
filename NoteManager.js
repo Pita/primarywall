@@ -64,14 +64,15 @@ exports.ensureAllNotesOfThisWallAreLoaded = function (wallid, callback)
         {
           notes[results[i].guid] = {"wallid": results[i].wallid, "title": results[i].title, 
                                    "content": results[i].content, "author": results[i].author,
-                                   "x": results[i].x, "y": results[i].y, "locksession":null};
+                                   "x": results[i].x, "y": results[i].y, 
+                                   "color": results[i].color, "locksession":null};
         }
         
         loadedWalls.push(wallid);
       }
-      else
+      else{
         console.error(err.message);
-                     
+      }          
       callback(err == null);
     });
   }
@@ -146,18 +147,19 @@ exports.removeLocksFromThisSession = function (session)
 /**
  * Creates a new note
  */
-exports.newNote = function (guid, wallid, title, content, author, x, y, callback)
+exports.newNote = function (guid, wallid, title, content, author, x, y, color, callback)
 {
   throwExceptionIfCallbackIsntOk(callback);
+  console.log(color);
 
-  client.query("INSERT INTO `note` (`guid`, `title`, `content`, `author`, `x`, `y`, `wallid`) " + 
-               "VALUES (?, ?, ?, ?, ?, ?, ?)", [guid, title, content, author, x, y, wallid], function(err)
+  client.query("INSERT INTO `note` (`guid`, `title`, `content`, `author`, `x`, `y`, `color`, `wallid`) " +
+               "VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [guid, title, content, author, x, y, color, wallid], function(err)
   {
     if(err == null)
-      notes[guid] = {"wallid": wallid, "title": title, "content": content, "author": author, "x":x, "y":y, "locksession":null};
-    else
+      notes[guid] = {"wallid": wallid, "title": title, "content": content, "author": author, "x":x, "y":y, "color": color, "locksession":null};
+    else{
       console.error(err.message);
-                   
+    }
     callback(err == null);
   });
 }
@@ -190,19 +192,20 @@ exports.moveNote = function (guid, x, y, session, callback)
 /**
  * Sets the new Values 
  */
-exports.editNote = function (guid, title, content, author, session, callback)
+exports.editNote = function (guid, title, content, author, color, session, callback)
 {
   throwExceptionIfGuidIsntOk(guid, session);
   throwExceptionIfCallbackIsntOk(callback);
   
-  client.query("UPDATE `note` SET `title` = ?, `content` = ?, `author` = ? WHERE `note`.`guid` = ?", 
-              [title, content, author, guid], function(err)
+  client.query("UPDATE `note` SET `title` = ?, `content` = ?, `author` = ?, `color` = ? WHERE `note`.`guid` = ?", 
+              [title, content, author, color, guid], function(err)
   {
     if(err == null)
     {
       notes[guid].title = title;
       notes[guid].content = content;
       notes[guid].author = author;
+      notes[guid].color = color;
     }
     else
     {

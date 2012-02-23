@@ -179,6 +179,7 @@ function handleHandshake(client, message)
         author: notes[i].author,
         x: notes[i].x,
         y: notes[i].y,
+        color: notes[i].color,
         locked: notes[i].locksession == null ? false : true
       };
       
@@ -239,7 +240,7 @@ function handleNew(client, message)
   
   var wallid = session2wall[client.id];
   
-  NoteManager.newNote (message.data.guid, wallid, message.data.title, message.data.content, message.data.author, message.data.x, message.data.y, function(success){
+  NoteManager.newNote (message.data.guid, wallid, message.data.title, message.data.content, message.data.author, message.data.x, message.data.y, message.data.color, function(success){
     if(!success)
     {
       client.disconnect();
@@ -287,8 +288,12 @@ function handleEdit(client, message)
   {
     throw "Edit Message have no author";
   }
-  
-  NoteManager.editNote (message.data.guid, message.data.title, message.data.content, message.data.author, client.id, function(success){
+  if(message.data.color == null)
+  {
+    throw "Edit Message have nocolor";
+  }
+
+  NoteManager.editNote (message.data.guid, message.data.title, message.data.content, message.data.author, message.data.color, client.id, function(success){
     if(!success)
     {
       client.disconnect();

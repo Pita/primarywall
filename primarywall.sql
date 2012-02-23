@@ -41,6 +41,10 @@ CREATE TABLE IF NOT EXISTS `note` (
   `x` int(4) NOT NULL COMMENT 'x coordinate of the note',
   `y` int(4) NOT NULL COMMENT 'y coordinate of the note',
   `wallid` varchar(80) NOT NULL COMMENT 'id of the wall this note exists on',
+  `color` varchar(1) NOT NULL COMMENT 'the color of the note',
   PRIMARY KEY (`guid`),
   KEY `wallid` (`wallid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+ALTER table note add column color varchar (10); 
+

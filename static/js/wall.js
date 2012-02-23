@@ -18,6 +18,7 @@
 /* Setting up some horrible global vars */
 var editcolor = false;
 var readonly = false;
+var exporting = false;
 
 // Socket IO w/ lovely fall back I choo choo choose you.
 $(document).ready(function ()
@@ -64,7 +65,7 @@ $(document).ready(function ()
     errlog(obj);
     if (obj.type == "new")
     {
-      newpost(obj.data.title, obj.data.content, obj.data.author, obj.data.x, obj.data.y, obj.data.guid)
+      newpost(obj.data.title, obj.data.content, obj.data.author, obj.data.x, obj.data.y, obj.data.guid, obj.data.color)
       if (obj.data.locked == true)
       {
         $('#' + obj.data.guid + ' > .notecontents').hide();
@@ -127,10 +128,12 @@ $(document).ready(function ()
       $('#' + obj.data.guid + ' > .notetitle').html(htmlescape(obj.data.title));
       $('#' + obj.data.guid + ' > .notecontents').html(htmlescape(obj.data.content));
       $('#' + obj.data.guid + ' > .notename').html(htmlescape(obj.data.author));
+      $('#' + obj.data.guid).css({"background-color":obj.data.color});
       
       notearray[obj.data.guid].title = obj.data.title;
       notearray[obj.data.guid].contents = obj.data.content;
       notearray[obj.data.guid].notename = obj.data.author;
+      notearray[obj.data.guid].color = obj.data.color;
     }
 
     // user count
@@ -159,6 +162,16 @@ $(document).ready(function ()
     }
   });
 
+  $('.colorBlock').click(function(){
+    var pickedColor = $(this).css("background-color");
+    editcolor = rgb2hex(pickedColor);
+    $('#editpage').css({"background-color":editcolor});
+  });
+
+  if(exporting === true){
+    // if we're exporting..
+    showAsExportable();
+  }
 });
 
 // For now we initialize a clear array bceause we don't have any server side data 
@@ -316,6 +329,14 @@ function newnote(event, dontshow)
       mouseY = randomXToY(120, 600);
     }
 
+    if(editcolor){
+      $('#editpage').css({"background-color":editcolor});
+    }else{
+      editcolor = randomNoteColor();
+      $('#editpage').css({"backgroundColor":editcolor}); //cake
+    }
+
+
     // Is this action a misfire AKA is there already a note in this space?
     var cool = 1;
       $('.note').each(function() {
@@ -350,6 +371,7 @@ function newnote(event, dontshow)
       $('#editnotetitle').val("");
       $('#editnotecontents').val("");
       $('#editnoteguid').val("");
+      $('#editnotecolor').val("");
 
       // If the  mouse click is from the last 200px of the page then put the note in the middle of the page
       var allowedX = x - 200;
@@ -484,11 +506,14 @@ function editnote(noteguid)
     var notecontents = notearray[noteguid].contents;
     var notename = notearray[noteguid].notename;
     var noteguid = notearray[noteguid].guid;
+    var notecolor = notearray[noteguid].color;
     $('#editpage').fadeIn();
     $('#editnotetitle').val(notetitle);
     $('#editnotecontents').val(notecontents);
     $('#editnotename').val(notename);
     $('#editnoteguid').val(noteguid);
+    $('#editnotecolor').val(notecolor);
+    $('#editpage').css({"background-color":notecolor});
   }
 }
 
@@ -501,6 +526,7 @@ function post()
   var editnotecontents = $('#editnotecontents').val();
   var editnotename = $('#editnotename').val();
   var editnoteguid = $('#editnoteguid').val();
+  var editnotecolor = editcolor;
   
   if(editnotecontents.length > 200)
   {
@@ -515,14 +541,18 @@ function post()
     notearray[editnoteguid].title = editnotetitle;
     notearray[editnoteguid].contents = editnotecontents;
     notearray[editnoteguid].notename = editnotename;
+    notearray[editnoteguid].color = editnotecolor;
     errlog(notearray);
     // Now the UI
     $('#' + editnoteguid + ' > .notetitle').html(htmlescape(editnotetitle));
-    if(editnotecontents.length == 200)
+    if(editnotecontents.length == 200){
       $('#' + editnoteguid + ' > .notecontents').html(htmlescape(editnotecontents) + "<b style='color:red'>(Text too long)</b>");
-    else
+    }
+    else{
       $('#' + editnoteguid + ' > .notecontents').html(htmlescape(editnotecontents));
+    }
     $('#' + editnoteguid + ' > .notename').html(htmlescape(editnotename));
+    $('#' + editnoteguid).css({"background-color":editnotecolor});
     //send to the Server
     errlog("updating server w/ edited contents");
     var data = {
@@ -541,20 +571,18 @@ function post()
       type: "unlock",
       "data": editnoteguid
     });
-
-
   }
   else
   {
     // Create a new post
     if(window.send_ga_event) {
-		send_ga_event('new-post', editnotetitle);
-	}
+      send_ga_event('new-post', editnotetitle);
+    }
     newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY);
     // tool tip for how to create a new note
     $('#superninja').fadeOut('slow');
     // Show the tip for how to drag
-    $('#transoverlay').fadeIn('slow');
+   $('#transoverlay').fadeIn('slow');
   }
   // now we have the values lets close the input box
   $('#editpage').hide();
@@ -612,7 +640,7 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
       author: editnotename,
       x: mouseX,
       y: mouseY,
-      y: color
+      color: color
     };
 
     socket.json.send(
