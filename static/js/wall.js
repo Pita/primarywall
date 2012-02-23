@@ -15,20 +15,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* Setting up some horrible global vars */
+var editcolor = false;
+var readonly = false;
+
 // Socket IO w/ lovely fall back I choo choo choose you.
 $(document).ready(function ()
 {
   // hide the loading page
   $('#loading').hide();
   socket = io.connect();
+  getParams();
 
   socket.on('connect', function ()
   {
     var url = document.URL.split("?")[0];
     var wallid = url.substring(url.lastIndexOf("/") + 1);
-    // hide the connection warning and show first helper
+    var wallidParams = wallid.substring(wallid.lastIndexOf("."));  // Ie read only
+    if(wallidParams.length !== wallid.length){
+      var wallid = wallid.replace(wallidParams, "");
+    }
+    readOnly = wallidParams.indexOf(".ro") != -1;
+    exporting = wallidParams.indexOf(".export") != -1;
+    if(exporting === true){
+      readOnly = true
+    };
     $('#newconnect').hide();
-    $('#superninja').show();
+    if(readOnly === true)
+    {
+      showAsReadOnly();
+    }
+    else
+    {
+      // hide the connection warning and show first helper
+      $('#superninja').show();
+    }
     socket.json.send(
     {
       type: "handshake",
@@ -50,6 +71,9 @@ $(document).ready(function ()
         $('#' + obj.data.guid + ' > .notename').fadeOut();
         $('#' + obj.data.guid + ' > .noteeditoption').fadeOut();
         $('#' + obj.data.guid + ' > .noteeditlocked').fadeIn();
+      }
+      if(readOnly === true){
+        showAsReadOnly();
       }
     }
 
@@ -130,13 +154,12 @@ $(document).ready(function ()
   // listen for clicks in values
   $('#values').bind('click', function (event)
   {
-    newnote(event, dontshow);
+    if(readOnly !== true){
+      newnote(event, dontshow);
+    }
   });
 
 });
-
-// Should we debug?
-var debug = 0;
 
 // For now we initialize a clear array bceause we don't have any server side data 
 var notearray = {};
@@ -162,7 +185,7 @@ var dontshow = 0;
 
 function errlog(error)
 {
-  if (window.console && debug == 1)
+  if (window.console)
   {
     console.log(error);
   }
@@ -222,7 +245,17 @@ function scaleNotePositions2Window()
 
 function reset()
 {
-  $('.note').draggable("option", "cursor", 'hand');
+  if(readOnly !== true)
+  {
+    $('.note').draggable("option", "cursor", 'hand');
+  }
+  else{
+    showAsReadOnly();
+  }
+  if(exporting === true){
+    // if we're exporting..
+    showAsExportable();
+  }
 }
 
 // What's the mouse position?
@@ -285,23 +318,30 @@ function newnote(event, dontshow)
 
     // Is this action a misfire AKA is there already a note in this space?
     var cool = 1;
-/*for (note in notearray)
-    {
-      if (note)
+      $('.note').each(function() {
+      var badtop = $(this).css("top");
+      var badleft = $(this).css("left");
+      var badtop = badtop.replace("px","");
+      var badleft = badleft.replace("px","");
+      badtop = parseInt(badtop);
+      badleft = parseInt(badleft);
+
+      var badright = 200 + badleft;
+      var badbottom = 100 + badtop;
+      errlog("Badleft is " + badleft + "-- Badright is " + badright + " badtop is " + badtop + " and badbottom is " + badbottom);
+      errlog("IF "+mouseX + " IS > "+badleft+ " AND "+mouseX +" IS < " +badright);
+      if (mouseX > badleft && mouseX < badright && mouseY < badbottom && mouseY > badtop)
       {
-        var badleft = notearray[note].x;
-        var badright = 200 + badleft;
-        var badtop = notearray[note].y;
-        var badbottom = 100 + badtop;
-        errlog("Badleft is " + badleft + "-- Badright is " + badright + " badtop is " + badtop + " and badbottom is " + badbottom);
-        if (mouseX > badleft && mouseX < badright && mouseY < badbottom && mouseY > badtop)
+        // we wont proceed because we are clicking on an already existing note
+        cool = 0;
+        errlog("Note already in this space, not continuing with creating new note");
+        // we should edit the current note
+        if(readOnly !== true)
         {
-          // we wont proceed because we are clicking on an already existing note
-          cool = 0;
-          errlog("Note already in this space, not continuing with creating new note");
+          editnote(notearray[note].guid);// cake john
         }
       }
-    }*/
+    });
 
     if (cool == 1)
     {
@@ -334,12 +374,19 @@ function newnote(event, dontshow)
         if (dropdownmode != 'search' || $('#search').val() == "") $('#extradropdown').hide('slow');
       }
       // make edit page draggable
-      $('#editpage').draggable();
-      $('#editpage').draggable("option", "cursor", "hand");
-      $('#editpage').draggable({containment: "#values"});
-      // Make first input box the focus object
-      $('#editnotetitle').focus();
+      if(readOnly !== true)
+      {
+        $('#editpage').draggable();
+        $('#editpage').draggable("option", "cursor", "hand");
+        $('#editpage').draggable({containment: "#values"});
+        // Make first input box the focus object
+        $('#editnotetitle').focus();
+      }
     }
+  }
+  if(exporting === true){
+    // if we're exporting..
+    showAsExportable();
   }
 }
 // delete note
@@ -418,28 +465,31 @@ function deletefunc(noteguid)
 
 function editnote(noteguid)
 {
-  socket.json.send(
+  if(readOnly !== true)
   {
-    type: "lock",
-    "data": noteguid
-  });
-  dontshow = 1;
-  errlog("Dont show before time out is " + dontshow);
-  setTimeout("dontshow = 0", 2000);
-  errlog("Dont show after timeout is " + dontshow);
-  // tool tip for how to create a new note
-  $('#superninja').fadeOut('slow');
-  // Show the tip for how to drag
-  $('#transoverlay').hide('slow');
-  var notetitle = notearray[noteguid].title;
-  var notecontents = notearray[noteguid].contents;
-  var notename = notearray[noteguid].notename;
-  var noteguid = notearray[noteguid].guid;
-  $('#editpage').fadeIn();
-  $('#editnotetitle').val(notetitle);
-  $('#editnotecontents').val(notecontents);
-  $('#editnotename').val(notename);
-  $('#editnoteguid').val(noteguid);
+    socket.json.send(
+    {
+      type: "lock",
+      "data": noteguid
+    });
+    dontshow = 1;
+    errlog("Dont show before time out is " + dontshow);
+    setTimeout("dontshow = 0", 2000);
+   errlog("Dont show after timeout is " + dontshow);
+    // tool tip for how to create a new note
+    $('#superninja').fadeOut('slow');
+    // Show the tip for how to drag
+    $('#transoverlay').hide('slow');
+    var notetitle = notearray[noteguid].title;
+    var notecontents = notearray[noteguid].contents;
+    var notename = notearray[noteguid].notename;
+    var noteguid = notearray[noteguid].guid;
+    $('#editpage').fadeIn();
+    $('#editnotetitle').val(notetitle);
+    $('#editnotecontents').val(notecontents);
+    $('#editnotename').val(notename);
+    $('#editnoteguid').val(noteguid);
+  }
 }
 
 // get the values from the note creation page
@@ -603,63 +653,71 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
 
   if (resizeTimer) clearTimeout(resizeTimer);
   resizeTimer = setTimeout(scaleNotePositions2Window, 500);
-
-  $('.note').draggable(
-  {
-    start: function (event, ui)
+  if(readOnly !== true){
+    $('.note').draggable(
     {
-      var zindex = $("#" + event.target.id).css("z-index");
-      errlog(event.target.id + " Z-index is " + zindex);
-      // set a higher z-index
-      zindex = Number(zindex);
-      zindex = zindexhighest + 1;
-      zindexhighest = zindexhighest + 1;
-      errlog(zindexhighest);
-      $("#" + event.target.id).css("z-index", zindex);
-
-      //errlog({"ui":ui});
-      //errlog({"event.target.id":event.target.id});
-      // tell teh server to lock teh note
-      socket.json.send(
+      start: function (event, ui)
       {
-        type: "lock",
-        "data": event.target.id
-      });
-    },
-    stop: function (event, ui)
-    {
-      newY = ui.position.top;
-      newX = ui.position.left;
-      errlog(this);
-      // Now we should update the array with the new X and Y values
-      // noteguid should be the div id of the div we just moved
-      noteguid = ui.helper.context.id;
-      notearray[noteguid].y = Math.round(newY / scale);
-      notearray[noteguid].x = Math.round(newX / scale);
-      errlog("New drag Y is " + newY);
-      errlog("New drag X is " + newX);
-      errlog(notearray);
-
-      //Send new Position to the Server
-      var data = {
-        guid: noteguid,
-        x: notearray[noteguid].x,
-        y: notearray[noteguid].y
-      };
-      socket.json.send(
+        var zindex = $("#" + event.target.id).css("z-index");
+        errlog(event.target.id + " Z-index is " + zindex);
+        // set a higher z-index
+       zindex = Number(zindex);
+        zindex = zindexhighest + 1;
+        zindexhighest = zindexhighest + 1;
+        errlog(zindexhighest);
+        $("#" + event.target.id).css("z-index", zindex);
+  
+        //errlog({"ui":ui});
+        //errlog({"event.target.id":event.target.id});
+        // tell teh server to lock teh note
+        socket.json.send(
+        {
+          type: "lock",
+          "data": event.target.id
+        });
+      },
+      stop: function (event, ui)
       {
-        type: "move",
-        "data": data
-      });
-      socket.json.send(
-      {
-        type: "unlock",
-        "data": noteguid
-      });
-      $('#transoverlay').fadeOut('slow');
-    },
-    containment: "#values"
-  });
+        newY = ui.position.top;
+        newX = ui.position.left;
+        errlog(this);
+        // Now we should update the array with the new X and Y values
+        // noteguid should be the div id of the div we just moved
+        noteguid = ui.helper.context.id;
+        notearray[noteguid].y = Math.round(newY / scale);
+       notearray[noteguid].x = Math.round(newX / scale);
+        errlog("New drag Y is " + newY);
+       errlog("New drag X is " + newX);
+        errlog(notearray);
+  
+        //Send new Position to the Server
+        var data = {
+          guid: noteguid,
+          x: notearray[noteguid].x,
+          y: notearray[noteguid].y
+        };
+        socket.json.send(
+        {
+          type: "move",
+          "data": data
+        });
+        socket.json.send(
+        {
+          type: "unlock",
+         "data": noteguid
+        });
+        $('#transoverlay').fadeOut('slow');
+      },
+      containment: "#values"
+    });
+  }
+  else{ // if it is readonly
+    $('.pencil').addClass('hidden');
+  }
+  if(exporting === true){
+    // if we're exporting..
+    showAsExportable();
+  }
 }
 
 var dropdownmode;
@@ -840,8 +898,53 @@ function lfe(event)
   }
 }
 
-
 function htmlescape(str)
 {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function getParams()
+{
+  var params = getUrlVars();
+  /* Add more parameter checks here */
+}
+
+function getUrlVars()
+{
+  var vars = [], hash;
+  var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+  for(var i = 0; i < hashes.length; i++)
+  {
+    hash = hashes[i].split('=');
+    vars.push(hash[0]);
+    vars[hash[0]] = hash[1];
+  }
+  return vars;
+}
+
+function showAsExportable(){
+  errlog("Showing as exportable");
+  $('.note').addClass('readyForExport');
+  $('.notetitle').css({"font-size":"24px","width":"800px"});
+  $('.noteeditoption').hide();
+  $('#top').hide();
+  $('#values').css({"top":"0px"});
+  $('body').css({"backgroundImage":"none"});
+  $('#footer').hide();
+  $('.notecontents').css({"word-wrap":"normal", "width":"800px"});
+  $('.notename').css({"width":"800px"});
+  $('#users').hide();
+  $('.pencil').addClass("hidden");
+}
+
+function showAsReadOnly(){
+  errlog("Showing as readOnly");
+  $('#bin').css({"opacity":"0"});
+  $('.pencil').addClass("hidden");
+  $('#users').addClass("hidden");
+  $('#top').addClass("hidden");
+  $('#newnote').addClass("hidden");
+  $('#values').css({"top":"0px"});
+  $('.noteeditoption').addClass("hidden");
+  $('.notetitle').css({"cursor":"default"});
 }
