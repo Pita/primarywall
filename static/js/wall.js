@@ -372,7 +372,7 @@ function newnote(event, dontshow)
       $('#editnotecontents').val("");
       $('#editnoteguid').val("");
       $('#editnotecolor').val("");
-      console.log(userName);
+
       if(userName){ // if a username has been passed as a parameter
         $('#editnotename').val(userName);
       }
