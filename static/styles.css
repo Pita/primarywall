@@ -472,3 +472,12 @@ padding-left:5px;
 width:0;
 }
 
+@media print{
+@page {size: landscape}
+.top{display:none;}
+#newnote{display:none;}
+#bin{display:none;}
+window > .menuTop{display:none;}
+.menuButton{display:none;}
+}
+
