@@ -150,6 +150,8 @@ border-right: 1px #ddd solid;
 border-bottom: 1px #ddd solid;
 border-left: 1px #666 solid;
 border-top: 1px #666 solid;
+cursor:hand;
+cursor:pointer;
 }
 
 .pwbutton
@@ -481,3 +483,14 @@ window > .menuTop{display:none;}
 .menuButton{display:none;}
 }
 
+#bin
+{
+position:absolute;
+right:10px;
+bottom:20px;
+z-index:99999;
+}
+
+#binImage{
+opacity:.6;
+}
