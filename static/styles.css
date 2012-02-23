@@ -456,5 +456,19 @@ text-align:center;
 }
 
 .hidden{
-  display:none;
+display:none;
 }
+
+.readyForExport{
+position:relative;
+color:#000;
+top:0px !important;
+left:0px !important;
+width:100%;
+border:0px;
+border-bottom:solid 1px #000;
+padding:0;
+padding-left:5px;
+width:0;
+}
+

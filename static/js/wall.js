@@ -925,7 +925,7 @@ function getUrlVars()
 function showAsExportable(){
   errlog("Showing as exportable");
   $('.note').addClass('readyForExport');
-  $('.notetitle').css({"font-size":"24px","width":"800px"});
+  $('.notetitle').css({"font-size":"24px","width":"800px","background":"#fff"});
   $('.noteeditoption').hide();
   $('#top').hide();
   $('#values').css({"top":"0px"});
