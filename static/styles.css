@@ -552,3 +552,7 @@ padding-left:0px;
 top:-27px;
 }
 
+.note:hover{
+  box-shadow:2px 2px 2px #333333;
+ 
+}
