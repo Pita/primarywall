@@ -34,7 +34,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 --
 
 CREATE TABLE IF NOT EXISTS `note` (
-  `guid` varchar(30) NOT NULL COMMENT 'guid of a note',
+  `guid` varchar(50) NOT NULL COMMENT 'guid of a note',
   `title` varchar(30) NOT NULL COMMENT 'title given to the note',
   `content` varchar(200) NOT NULL COMMENT 'contents of the note',
   `author` varchar(20) NOT NULL COMMENT 'author of the note',
