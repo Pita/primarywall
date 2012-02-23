@@ -166,6 +166,7 @@ $(document).ready(function ()
   // listen for clicks in values
   $('#values').bind('click', function (event)
   {
+//    console.log(event);
     if(readOnly !== true){
       newnote(event, dontshow, false);
     }
@@ -327,10 +328,13 @@ function newnote(event, dontshow, charCode)
   {
     errlog("Dont show during function is: " + dontshow);
     // What is the mouse X Y?
+    console.log(event);
     if (currmouseX(event))
     {
-      mouseX = currmouseX(event);
-      mouseY = currmouseY(event);
+      mouseX = event.pageX;
+      console.log(mouseX);
+      mouseY = event.pageY;
+      console.log(mouseY);
     }
     else
     {
@@ -346,29 +350,37 @@ function newnote(event, dontshow, charCode)
 
     // Is this action a misfire AKA is there already a note in this space?
     var noteDoesntAlreadyExists = true;
-    $('.note').each(function() {
+    $('.note').each(function(){
+      console.log("NOTE");
+      var badleft = $(this).css("left"); // how far to the left is this note
+      var topHeight = $("#top").css("height"); // the height of the top bar
+      /* Most of the code below is really poorly written due to having to hack it to make IE work, it needs a rewrite */
       var badtop = $(this).css("top");
-      var badleft = $(this).css("left");
+      var topHeight = topHeight.replace("px","");
+      var topHeight = parseInt(topHeight);
       var badtop = badtop.replace("px","");
       var badleft = badleft.replace("px","");
       var badHeight = $(this).outerHeight(true);
-      console.log(badHeight);
-      badtop = parseInt(badtop);
-      badleft = parseInt(badleft);
-
+      var badtop = parseInt(badtop);
+      var badleft = parseInt(badleft);
+      var badtop = badtop + topHeight;
       var badright = 210 + badleft; 
-      var badbottom = badHeight + badtop; // This sucks because its assuming all notes are the same height!
-      errlog("Badleft is " + badleft + "-- Badright is " + badright + " badtop is " + badtop + " and badbottom is " + badbottom);
+      var badbottom = badHeight + badtop; 
+      // errlog("Badleft is " + badleft + "-- Badright is " + badright + " badtop is " + badtop + " and badbottom is " + badbottom);
       errlog("IF "+mouseX + " IS > "+badleft+ " AND "+mouseX +" IS < " +badright);
-      if (mouseX > badleft && mouseX < badright && mouseY < badbottom && mouseY > badtop)
-      {
-        // we wont proceed because we are clicking on an already existing note
-        noteDoesntAlreadyExists = false;
-        errlog("Note already in this space, not continuing with creating new note");
-        // we should edit the current note
-        if(readOnly !== true)
-        {
-          editnote(notearray[note].guid);// cake john
+      errlog("AND IF "+mouseY + " IS < "+badbottom+ " AND "+mouseY +" IS > " +badtop);
+      /* End of really badly written code */
+      if (mouseX > badleft && mouseX < badright){
+        errlog("x looks good");
+        if(mouseY < badbottom && mouseY > badtop){
+          // we wont proceed because we are clicking on an already existing note
+          noteDoesntAlreadyExists = false;
+          errlog("Note already in this space, not continuing with creating new note");
+          // we should edit the current note
+          if(readOnly !== true)
+          {
+            editnote(notearray[note].guid);// cake john
+          }
         }
       }
     });
@@ -514,7 +526,7 @@ function editnote(noteguid)
     dontshow = 1;
     errlog("Dont show before time out is " + dontshow);
     setTimeout("dontshow = 0", 2000);
-   errlog("Dont show after timeout is " + dontshow);
+    errlog("Dont show after timeout is " + dontshow);
     // tool tip for how to create a new note
     $('#superninja').fadeOut('slow');
     // Show the tip for how to drag
@@ -575,7 +587,8 @@ function post()
       guid: editnoteguid,
       title: editnotetitle,
       content: editnotecontents,
-      author: editnotename
+      author: editnotename,
+      color: editnotecolor
     };
     socket.json.send(
     {
