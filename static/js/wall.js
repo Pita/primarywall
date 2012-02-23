@@ -26,10 +26,11 @@ $(document).ready(function ()
 {
   // stop firefox breaking sockets on escape key...
   $(this).keypress(function(e){ 
-        if(e.keyCode == 27){ 
-            return false; 
-        } 
-    }); 
+    if(e.keyCode == 27){ 
+      $('#editpage').hide();       
+      return false; 
+    } 
+  }); 
 
   // hide the loading page
   $('#loading').hide();
@@ -343,25 +344,26 @@ function newnote(event, dontshow, charCode)
       $('#editpage').css({"backgroundColor":editcolor}); //cake
     }
 
-
     // Is this action a misfire AKA is there already a note in this space?
-    var cool = 1;
+    var noteDoesntAlreadyExists = true;
     $('.note').each(function() {
       var badtop = $(this).css("top");
       var badleft = $(this).css("left");
       var badtop = badtop.replace("px","");
       var badleft = badleft.replace("px","");
+      var badHeight = $(this).outerHeight(true);
+      console.log(badHeight);
       badtop = parseInt(badtop);
       badleft = parseInt(badleft);
 
-      var badright = 200 + badleft;
-      var badbottom = 100 + badtop;
+      var badright = 210 + badleft; 
+      var badbottom = badHeight + badtop; // This sucks because its assuming all notes are the same height!
       errlog("Badleft is " + badleft + "-- Badright is " + badright + " badtop is " + badtop + " and badbottom is " + badbottom);
       errlog("IF "+mouseX + " IS > "+badleft+ " AND "+mouseX +" IS < " +badright);
       if (mouseX > badleft && mouseX < badright && mouseY < badbottom && mouseY > badtop)
       {
         // we wont proceed because we are clicking on an already existing note
-        cool = 0;
+        noteDoesntAlreadyExists = false;
         errlog("Note already in this space, not continuing with creating new note");
         // we should edit the current note
         if(readOnly !== true)
@@ -371,7 +373,7 @@ function newnote(event, dontshow, charCode)
       }
     });
 
-    if (cool == 1)
+    if (noteDoesntAlreadyExists === true)
     {
       // Reset input values to blank as this is a new note
       errlog("Making new note");

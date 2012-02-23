@@ -246,7 +246,7 @@ background-color:#2c729b;
 padding: 5px 5px 5px 10px;
 z-index:999999;
 margin:0 auto;
-margin-top:65px;
+margin-top:75px;
 }
 
 .title
@@ -305,6 +305,7 @@ background-color:#000000;
 width:190px;
 padding: 5px 5px 5px 5px;
 cursor:move;
+min-height:25px;
 }
 
 .notecontents
