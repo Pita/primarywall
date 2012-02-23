@@ -24,7 +24,6 @@ var userName = false;
 // Socket IO w/ lovely fall back I choo choo choose you.
 $(document).ready(function ()
 {
-
   // stop firefox breaking sockets on escape key...
   $(this).keypress(function(e){ 
         if(e.keyCode == 27){ 
@@ -167,7 +166,7 @@ $(document).ready(function ()
   $('#values').bind('click', function (event)
   {
     if(readOnly !== true){
-      newnote(event, dontshow);
+      newnote(event, dontshow, false);
     }
   });
 
@@ -321,7 +320,7 @@ function user_count(count)
 
 // Create a new note
 
-function newnote(event, dontshow)
+function newnote(event, dontshow, charCode)
 {
   if (dontshow == 0)
   {
@@ -416,8 +415,8 @@ function newnote(event, dontshow)
         var input = $('#editnotetitle');
         input.focus();
         input.val(''); 
-        if(event){
-          input.val(event);
+        if(charCode){
+          input.val(charCode);
         }
       }
     }
@@ -543,7 +542,6 @@ function post()
   var editnotename = $('#editnotename').val();
   var editnoteguid = $('#editnoteguid').val();
   var editnotecolor = editcolor;
-  console.log(editcolor);  
   if(editnotecontents.length > 200)
   {
     editnotecontents = editnotecontents.substr(0,197) + "...";
@@ -987,9 +985,7 @@ function begin()
     else{
       var charCode = String.fromCharCode(event.charCode);
       errlog("Making new note due to new keystroke");
-      console.log(charCode);
-      var event = charCode;
-      newnote(event, dontshow);
+      newnote(event, dontshow, charCode);
     }
   });
 }
