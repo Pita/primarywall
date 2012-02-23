@@ -29,7 +29,7 @@ $(document).ready(function ()
     if(e.keyCode == 27){ 
       $('#editpage').hide();       
       return false; 
-    } 
+    }
   }); 
 
   // hide the loading page
@@ -164,9 +164,7 @@ $(document).ready(function ()
   });
 
   // listen for clicks in values
-  $('#values').bind('click', function (event)
-  {
-//    console.log(event);
+  $('#values').bind('click', function (event){
     if(readOnly !== true){
       newnote(event, dontshow, false);
     }
@@ -324,7 +322,7 @@ function user_count(count)
 
 function newnote(event, dontshow, charCode)
 {
-  if (dontshow == 0)
+  if (dontshow == 0 || charCode == 0)
   {
     errlog("Dont show during function is: " + dontshow);
     // What is the mouse X Y?
@@ -536,6 +534,7 @@ function editnote(noteguid)
     var notename = notearray[noteguid].notename;
     var noteguid = notearray[noteguid].guid;
     var notecolor = notearray[noteguid].color;
+    console.log("NOTECOLOR: "+notecolor);
     $('#editpage').fadeIn();
     $('#editnotetitle').val(notetitle);
     $('#editnotecontents').val(notecontents);
