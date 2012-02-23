@@ -481,6 +481,16 @@ width:0;
 #bin{display:none;}
 window > .menuTop{display:none;}
 .menuButton{display:none;}
+.noteeditlocked{display:none !important;}
+.notename{display:block !important;}
+.notecontents{display:block !important;}
+.notetitle{display:block;}
+#superninja{display:none !important;}
+#superninja2{display:none !important;}
+#extra{display:none;}
+#transoverlay{display:none;}
+#logo{display:none;}
+.noteeditoption{display:none;}
 }
 
 #bin
