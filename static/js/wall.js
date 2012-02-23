@@ -19,6 +19,7 @@
 var editcolor = false;
 var readonly = false;
 var exporting = false;
+var userName = false;
 
 // Socket IO w/ lovely fall back I choo choo choose you.
 $(document).ready(function ()
@@ -338,7 +339,7 @@ function newnote(event, dontshow)
 
     // Is this action a misfire AKA is there already a note in this space?
     var cool = 1;
-      $('.note').each(function() {
+    $('.note').each(function() {
       var badtop = $(this).css("top");
       var badleft = $(this).css("left");
       var badtop = badtop.replace("px","");
@@ -371,6 +372,10 @@ function newnote(event, dontshow)
       $('#editnotecontents').val("");
       $('#editnoteguid').val("");
       $('#editnotecolor').val("");
+      console.log(userName);
+      if(userName){ // if a username has been passed as a parameter
+        $('#editnotename').val(userName);
+      }
 
       // If the  mouse click is from the last 200px of the page then put the note in the middle of the page
       var allowedX = x - 200;
@@ -867,7 +872,7 @@ function search()
   {
     var found = 0;
     var noteguid = notearray[note].guid;
-/*var notetitle = $('#'+noteguid + ' > .notetitle').html();
+    /*var notetitle = $('#'+noteguid + ' > .notetitle').html();
     var notecontents = $('#'+noteguid + ' > .notecontents').html();
     var notename = $('#'+noteguid + ' > .notename').html();*/
     var notetitle = notearray[noteguid].title;
@@ -996,6 +1001,7 @@ function getParams()
 {
   var params = getUrlVars();
   /* Add more parameter checks here */
+  userName = params["userName"];
 }
 
 function getUrlVars()
