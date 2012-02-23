@@ -328,7 +328,6 @@ function newnote(event, dontshow)
       mouseX = randomXToY(50, 800);
       mouseY = randomXToY(120, 600);
     }
-
     if(editcolor){
       $('#editpage').css({"background-color":editcolor});
     }else{
@@ -599,7 +598,7 @@ function guidGenerator()
   return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
 
-function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, noteguid)
+function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, noteguid, color)
 {
   // First a bit of code in so we can debug
   errlog("Edit note title is " + editnotetitle);
