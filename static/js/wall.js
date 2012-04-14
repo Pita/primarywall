@@ -20,6 +20,7 @@ var editcolor = false;
 var readonly = false;
 var exporting = false;
 var userName = false;
+var dragging = false;
 
 // Socket IO w/ lovely fall back I choo choo choose you.
 $(document).ready(function ()
@@ -165,7 +166,7 @@ $(document).ready(function ()
 
   // listen for clicks in values
   $('#values').bind('click', function (event){
-    if(readOnly !== true){
+    if(readOnly !== true && !dragging){ // if we're not inr ead only mode and were not dragging an existing note
       newnote(event, dontshow, false);
     }
   });
@@ -723,11 +724,13 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
         var zindex = $("#" + event.target.id).css("z-index");
         errlog(event.target.id + " Z-index is " + zindex);
         // set a higher z-index
-       zindex = Number(zindex);
+        zindex = Number(zindex);
         zindex = zindexhighest + 1;
         zindexhighest = zindexhighest + 1;
         errlog(zindexhighest);
         $("#" + event.target.id).css("z-index", zindex);
+        // set dragging to true, this is a global value to say if we are dragging a new note
+        dragging = true;
   
         //errlog({"ui":ui});
         //errlog({"event.target.id":event.target.id});
@@ -771,6 +774,9 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
         errlog("New drag Y is " + newY);
         errlog("New drag X is " + newX);
         errlog(notearray);
+        setTimeout(function(){
+          dragging = false; // remove the global reference to dragging true..  we need this so we can create new notes..
+        },100);
   
         // Collision detection for Bin
  
