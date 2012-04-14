@@ -262,13 +262,13 @@ function scaleNotePositions2Window()
 }
 
 
-// Make notes draggable
+// Make notes pep
 
 function reset()
 {
   if(readOnly !== true)
   {
-    $('.note').draggable("option", "cursor", 'hand');
+    $('.note').pep();
   }
   else{
     showAsReadOnly();
@@ -326,13 +326,13 @@ function newnote(event, dontshow, charCode)
   {
     errlog("Dont show during function is: " + dontshow);
     // What is the mouse X Y?
-    console.log(event);
+    // console.log(event);
     if (currmouseX(event))
     {
       mouseX = event.pageX;
-      console.log(mouseX);
+      // console.log(mouseX);
       mouseY = event.pageY;
-      console.log(mouseY);
+      // console.log(mouseY);
     }
     else
     {
@@ -349,7 +349,7 @@ function newnote(event, dontshow, charCode)
     // Is this action a misfire AKA is there already a note in this space?
     var noteDoesntAlreadyExists = true;
     $('.note').each(function(){
-      console.log("NOTE");
+      // console.log("NOTE");
       var badleft = $(this).css("left"); // how far to the left is this note
       var topHeight = $("#top").css("height"); // the height of the top bar
       /* Most of the code below is really poorly written due to having to hack it to make IE work, it needs a rewrite */
@@ -407,9 +407,7 @@ function newnote(event, dontshow, charCode)
       if ($('#extradropdown').css('display') == 'none')
       {
         $('#editpage').show();
-        $('.note').draggable("option", "containment", '#values');
-        $('.note').draggable("option", "cursor", 'pointer');
-        $('.note').draggable("option", "cursor", 'hand');
+        $('.note').pep({"boundToParent":true});
         // Here we need some code that sets a function for when the note has finished being dragged
       }
       else
@@ -417,12 +415,10 @@ function newnote(event, dontshow, charCode)
         // hide the drop down
         if (dropdownmode != 'search' || $('#search').val() == "") $('#extradropdown').hide('slow');
       }
-      // make edit page draggable
+      // make edit page pep
       if(readOnly !== true)
       {
-        $('#editpage').draggable();
-        $('#editpage').draggable("option", "cursor", "hand");
-        $('#editpage').draggable({containment: "#values"});
+        $('.note').pep({"boundToParent":true});
         // Make first input box the focus object
         var input = $('#editnotetitle');
         input.focus();
@@ -534,7 +530,7 @@ function editnote(noteguid)
     var notename = notearray[noteguid].notename;
     var noteguid = notearray[noteguid].guid;
     var notecolor = notearray[noteguid].color;
-    console.log("NOTECOLOR: "+notecolor);
+    // console.log("NOTECOLOR: "+notecolor);
     $('#editpage').fadeIn();
     $('#editnotetitle').val(notetitle);
     $('#editnotecontents').val(notecontents);
@@ -713,14 +709,14 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
   // animate it onto the UI
   $('#' + noteguid).fadeIn();
 
-  // Remind the UI that all of these objects are draggable
+  // Remind the UI that all of these objects are pep
   $('#' + noteguid).css("left", mouseX);
   $('#' + noteguid).css("top", mouseY);
 
   if (resizeTimer) clearTimeout(resizeTimer);
   resizeTimer = setTimeout(scaleNotePositions2Window, 500);
   if(readOnly !== true){
-    $('.note').draggable(
+    $('.note').pep(
     {
       start: function (event, ui)
       {
@@ -744,9 +740,9 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
       },
       drag: function (event, ui)
       {
-        newY = ui.position.top;
-        newX = ui.position.left;
-        noteguid = ui.helper.context.id;
+        newY = ui._y;
+        newX = ui._x;
+        noteguid = ui.el.id;
         // Detect if we are near the bin..  If so panic!
         // get x and y co-ordinate of bin.
         var binY = $('#bin').position().top;
