@@ -760,12 +760,12 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
       },
       stop: function (event, ui)
       {
-        newY = ui.position.top;
-        newX = ui.position.left;
+        newY = ui._y;
+        newX = ui._x;
         errlog(this);
         // Now we should update the array with the new X and Y values
         // noteguid should be the div id of the div we just moved
-        noteguid = ui.helper.context.id;
+        noteguid = ui.el.id;
         notearray[noteguid].y = Math.round(newY / scale);
         notearray[noteguid].x = Math.round(newX / scale);
         errlog("New drag Y is " + newY);
