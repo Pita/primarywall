@@ -108,7 +108,7 @@ $(document).ready(function ()
     else if (obj.type == "delete")
     {
       // remove from screen
-      $('#' + obj.data).hide("explode", 1000);
+      $('#' + obj.data).hide();
       // remove from array
       delete notearray[obj.data];
     }
@@ -471,7 +471,7 @@ function dontdelete(noteguid)
 function deletenote(noteguid)
 {
   deletefunc(noteguid);
-  $('#' + noteguid).hide("explode", 1000);
+  $('#' + noteguid).hide();
   //Send new Position to the Server
   socket.json.send(
   {
@@ -764,8 +764,13 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
       stop: function (event, ui)
       {
         newY = ui._y;
+        console.log(newY);
         newX = ui._x;
-        errlog(this);
+console.log("FOO");
+console.log(notearray[noteguid]);
+//        errlog(this);
+console.log("MHEH");
+console.log("scale is "+scale);
         // Now we should update the array with the new X and Y values
         // noteguid should be the div id of the div we just moved
         noteguid = ui.el.id;
@@ -1018,6 +1023,7 @@ function lfe(event)
     // submit the form
     post();
   }
+  console.log("FOOra");
 }
 
 function htmlescape(str)
