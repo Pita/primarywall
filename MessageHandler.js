@@ -334,8 +334,6 @@ function handleMove(client, message)
  */
 function broadcastToTheOtherOnTheWall(client, message)
 {
-  // console.log("CLIENT DATA:");
-  // console.log(client);
   var wallid = session2wall[client.id];
   for(i in wall2sessions[wallid])
   {
