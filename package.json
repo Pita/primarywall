@@ -1,0 +1,13 @@
+{
+  "name"           : "primarywall",
+  "description"    : "Sticky walls from Primarywall",
+  "homepage"       : "https://github.com/Pita/primarywall",
+  "keywords"       : ["primarywall", "sticky note", "realtime", "collaborative", "brainstorm"],
+  "author"         : "John McLear - Primary Technology",
+  "dependencies"   : {
+                      "socket.io"           : "0.9.6",
+  "engines"        : { "node" : ">=0.6.0",
+                       "npm"  : ">=1.0"
+                     }, 
+  "version"        : "1.0.0"
+}
