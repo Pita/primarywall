@@ -234,7 +234,10 @@ function scaleNotePositions2Window()
   {
     if (note)
     {
-      if (notearray[note].x > maxNoteX) maxNoteX = notearray[note].x;
+      if (notearray[note].x > maxNoteX)
+      {
+        maxNoteX = notearray[note].x;
+      }
     }
   }
 
@@ -252,11 +255,9 @@ function scaleNotePositions2Window()
       //var noteguid = notearray[note].guid;
       var x = notearray[note].x * scale;
       var y = notearray[note].y * scale;
-
       $('#' + note).animate(
       {
-        left: x,
-        top: y
+        left: x
       });
     }
   }
@@ -269,7 +270,7 @@ function reset()
 {
   if(readOnly !== true)
   {
-    $('.note').pep();
+    $('.note').pep({"constrainToParent":true});
   }
   else{
     showAsReadOnly();
@@ -408,7 +409,7 @@ function newnote(event, dontshow, charCode)
       if ($('#extradropdown').css('display') == 'none')
       {
         $('#editpage').show();
-        $('.note').pep({"boundToParent":true});
+        $('.note').pep({"constrainToParent":true});
         // Here we need some code that sets a function for when the note has finished being dragged
       }
       else
@@ -419,7 +420,7 @@ function newnote(event, dontshow, charCode)
       // make edit page pep
       if(readOnly !== true)
       {
-        $('.note').pep({"boundToParent":true});
+        $('.note').pep({"constrainToParent":true});
         // Make first input box the focus object
         var input = $('#editnotetitle');
         input.focus();
@@ -745,8 +746,8 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
       },
       drag: function (event, ui)
       {
-        newY = ui._y;
-        newX = ui._x;
+        newY = $(ui.el).offset().top;
+        newX = $(ui.el).offset().left;
         noteguid = ui.el.id;
         // Detect if we are near the bin..  If so panic!
         // get x and y co-ordinate of bin.
@@ -765,8 +766,8 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
       },
       rest: function (event, ui)
       {
-        newY = ui._y;
-        newX = ui._x;
+        newY = $(ui.el).offset().top;
+        newX = $(ui.el).offset().left;
         // Now we should update the array with the new X and Y values
         // noteguid should be the div id of the div we just moved
         noteguid = ui.el.id;
