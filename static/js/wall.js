@@ -252,10 +252,11 @@ function scaleNotePositions2Window()
       //var noteguid = notearray[note].guid;
       var x = notearray[note].x * scale;
       var y = notearray[note].y * scale;
-
+      y = y-50;
       $('#' + note).animate(
       {
         left: x,
+        top: y
       });
     }
   }
@@ -720,6 +721,7 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
   if(readOnly !== true){
     $('.note').pep(
     {
+      boundToParent:true,
       start: function (event, ui)
       {
         var zindex = $("#" + event.target.id).css("z-index");
