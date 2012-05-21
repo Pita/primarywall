@@ -150,7 +150,6 @@ exports.removeLocksFromThisSession = function (session)
 exports.newNote = function (guid, wallid, title, content, author, x, y, color, callback)
 {
   throwExceptionIfCallbackIsntOk(callback);
-  console.log(color);
 
   client.query("INSERT INTO `note` (`guid`, `title`, `content`, `author`, `x`, `y`, `color`, `wallid`) " +
                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [guid, title, content, author, x, y, color, wallid], function(err)
