@@ -692,11 +692,13 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
   // Now lets append the note to the UI
   var notehtmlcont = '<div class="note" id=' + noteguid + ' style="display:none;background-color:'+ color + '">';
   var notehtmltitle = '<div class="notetitle">' + htmlescape(editnotetitle) + '</div>';
+  editnotecontents = htmlescape(editnotecontents);
+  editnotecontents = urlify(editnotecontents);
   if(editnotecontents.length == 200){
-    var notehtmlcontents = '<div class="notecontents">' + htmlescape(editnotecontents) + '<b style=\'color:red\'>(Text too long)</b></div>';
+    var notehtmlcontents = '<div class="notecontents">' + editnotecontents + '<b style=\'color:red\'>(Text too long)</b></div>';
   }
   else{
-    var notehtmlcontents = '<div class="notecontents">' + htmlescape(editnotecontents) + '</div>';
+    var notehtmlcontents = '<div class="notecontents">' + editnotecontents + '</div>';
   }
   var notehtmlname = '<div class="notename">by ' + htmlescape(editnotename) + '</div>';
   var notehtmledit = '<div class="noteeditoption"><a onclick=deleteprompt("' + noteguid + '");>delete</a> | <a style="z-index:999999;" onclick=editnote("' + noteguid + '");>edit</a></div>';
@@ -1097,3 +1099,14 @@ function hex(x) {
   return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
 }
 
+function htmlescape(str)
+{
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function urlify(text) {
+  var urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlRegex, function(url) {
+    return '<a target="_blank" href="' + url + '">' + url + '</a>';
+  })
+}
