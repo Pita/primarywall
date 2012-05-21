@@ -766,13 +766,7 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
       stop: function (event, ui)
       {
         newY = ui._y;
-        console.log(newY);
         newX = ui._x;
-console.log("FOO");
-console.log(notearray[noteguid]);
-//        errlog(this);
-console.log("MHEH");
-console.log("scale is "+scale);
         // Now we should update the array with the new X and Y values
         // noteguid should be the div id of the div we just moved
         noteguid = ui.el.id;
@@ -1025,7 +1019,6 @@ function lfe(event)
     // submit the form
     post();
   }
-  console.log("FOOra");
 }
 
 function htmlescape(str)

@@ -50,7 +50,7 @@ server = http.createServer(function(req, res){
     }
   }
 });
-server.listen(940);
+server.listen(80);
 
 function randomWallName() {
 	var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
