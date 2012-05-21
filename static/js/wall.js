@@ -763,7 +763,7 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
           $('#binImage').height("60px");
         }
       },
-      stop: function (event, ui)
+      rest: function (event, ui)
       {
         newY = ui._y;
         newX = ui._x;
