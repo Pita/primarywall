@@ -118,6 +118,11 @@ function requestLog(code, path, desc)
 
 //var io = io.listen(server);
 var io = require('socket.io').listen(server)
+io.enable('browser client minification');  // send minified client
+io.enable('browser client etag');          // apply etag caching logic based on version number
+io.enable('browser client gzip');          // gzip the file
+io.set("polling duration", 10);            // allow for long polling
+io.set('log level', 1);                    // reduce logging
 
 var messageHandler = require("./MessageHandler");
 messageHandler.setSocketIO(io);
