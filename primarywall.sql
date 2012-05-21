@@ -46,5 +46,5 @@ CREATE TABLE IF NOT EXISTS `note` (
   KEY `wallid` (`wallid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-ALTER table note add column color varchar (10); 
+ALTER table note add column color varchar(10); 
 
