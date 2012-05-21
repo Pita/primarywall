@@ -15,6 +15,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- 
 
+--
+-- If you are doing an upgrade from V<1 you will need to do ALTER table note add column color varchar(10)
+-- Before you run that command look to see if a color column exists in note first.
+--
+
+
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 
@@ -46,5 +52,5 @@ CREATE TABLE IF NOT EXISTS `note` (
   KEY `wallid` (`wallid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-ALTER table note add column color varchar(10); 
+
 
