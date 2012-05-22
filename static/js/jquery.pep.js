@@ -1,10 +1,7 @@
-/*******************************************************************
- * Pep! (jquery.pep.js) 
- * [ Version 0.2 ]
- * ---------------------------------------------------------- 
+/***************************************************
+ * Pep! (jquery.pep.js)
  * Copyright 2012, Brian Gonzalez
  * Dual licensed under the MIT or GPL Version 2 licenses.
- *  
  *
  *    Dependencies:
  *        - jQuery
@@ -23,8 +20,8 @@
             cssEaseString:          "cubic-bezier(0.210, 1, 0.220, 1.000)",
             cssEaseDuration:        1000,
             constrainToWindow:      false,
-            constrainToParent:      false,          // EXPERIMENTAL! use with caution. you've been warned.
             shouldEase:             true,
+            boundToParent:          false,
             drag:                   function(){},
             start:                  function(){},
             stop:                   function(){},
@@ -51,11 +48,10 @@
         this._dt =                  null;
         this._offset =              null;
         this._velocityQueue =       [null,null,null,null,null];
-        this.tempFxn =              {};
         this._startTrigger =        this._isTouch() ? "touchstart"  : "mousedown";
         this._endTrigger =          this._isTouch() ? "touchend"    : "mouseup";
         this._moveTrigger =         this._isTouch() ? "touchmove"   : "mousemove";
-        this._positionType =        this.options.constrainToParent ? 'position' : 'offset';
+        this._positionType =        this.options.boundToParent ? 'position' : 'offset';
         this.init();
     }
 
@@ -64,65 +60,47 @@
         var self = this;
         var $this = $(this.el);
                 
-        // Build our debug div
+        // build our debug div
         if (this.options.debug && !($('#debug').length > 0) ) $('body').append("<div id='debug' style='position: fixed; bottom: 0; right: 0; z-index: 10000; text-align: right'>debug mode</div>"); 
         
         // Bind the magic
         $this.bind( this._startTrigger, function(e){ self._do(e); } );
     };
 
+    Pep.prototype._bindings = function(){};
 
     Pep.prototype._do = function(event){
 
-      // Non-touch device -- or -- non-pinch on touch device?
+      // Non-touch device or non-pinch on touch device?
       if ( !this._isTouch() || ( this._isTouch() && event.originalEvent.hasOwnProperty('touches') && event.originalEvent.touches.length == 1 ) ){
         event.preventDefault();
-        var self              = this;
-        var $this             = $(this.el);
-        if( $this.hasClass( self.options.activeClass ) ) stopping();   
+        var self      = this;
+        var $this     = $(this.el);
+        if( $this.hasClass( self.options.activeClass ) ) $.fn.pep.stopping();   
         $this.addClass( this.options.activeClass );
-        this._x               = self._isTouch() ? event.originalEvent.pageX : event.pageX;
-        this._y               = self._isTouch() ? event.originalEvent.pageY : event.pageY;
-        this._startX          = this._x;
-        this._startY          = this._y;
-        this._start           = true;
-        this._active          = true;
-        this._started         = false;
-        this._moveEvent       = null;
+        this._x       = self._isTouch() ? event.originalEvent.pageX : event.pageX;
+        this._y       = self._isTouch() ? event.originalEvent.pageY : event.pageY;
+        this._startX  = this._x;
+        this._startY  = this._y;
+        this._start   = true;
+        this._active  = true;
+        this._started = false;
         self._log( this._startTrigger );
 
         // remove CSS3 animation
         $this.css( self._cssEaseHashReset() );
 
-        // stopping -------------------------------------
-        var stopping = function(event){
-          if ( self._active ){
-            if (self.options.shouldEase) self._ease();
-            self._doRest(event, self);
-            $(window).unbind( self._moveTrigger, dragging );
-            $this.unbind( self._endTrigger, stopping );
-            self._log( self._endTrigger );
-            self._active = false;
-            self._velocityQueue = [null,null,null,null,null];
-            $this.removeClass( self.options.activeClass );
-
-            // fire user's stop event.
-            self.options.stop(event, self);
-          }
-        };
-        $(window).bind( this._endTrigger + " " + this.options.stopEvents, stopping );  // ... then bind our stop trigger
-
-        // dragging ----------------------------------------
-        var dragging = function(event){
-
+        // dragging
+        $.fn.pep.dragging = function(event){
+          
           // Stop all drag events
           if (disable) {
-            stopping();
+            //$(self.el).trigger( self._endTrigger );
+            $.fn.pep.stopping();
             return;
           }
 
           self._offset = $this[self._positionType]();
-          $this.css({ top: self._offset.top, left: self._offset.left });
   
           // fire user's drag event.
           self.options.drag(event, self);
@@ -136,7 +114,7 @@
              $this.css({ position: 'absolute', top: self._offset.top, left: self._offset.left});
           }
 
-          // Last in, first out (LIFO) queue to help us manage velocity
+          // LIFO queue to help us manage velocity
           self._lifo( { time: event.timeStamp, x: curX, y: curY } );
 
           //  mouse off screen? -10 is a buffer
@@ -151,7 +129,7 @@
           var xOp     = ( dx >= 0 ) ? "+=" + Math.abs(dx / self._scale)*mult : "-=" + Math.abs(dx / self._scale)*mult;
           var yOp     = ( dy >= 0 ) ? "+=" + Math.abs(dy / self._scale)*mult : "-=" + Math.abs(dy / self._scale)*mult;
           
-          if (self.options.constrainToParent) {
+          if (self.options.boundToParent) {
             var pos     = $this.position();
             var $parent = $this.parent();
 
@@ -191,19 +169,25 @@
           self._start = false;
         };
 
-        var storeMoveEvent = function(event){
-          self._moveEvent = event;
+        $(window).bind( this._moveTrigger, $.fn.pep.dragging ); // ... then bind out drag trigger
+
+        // stop
+        $.fn.pep.stopping = function(event){
+          if ( self._active ){
+            if (self.options.shouldEase) self._ease();
+            self._doRest(event, self);
+            $(window).unbind( self._moveTrigger, $.fn.pep.dragging );
+            $this.unbind( self._endTrigger, $.fn.pep.stopping );
+            self._log( self._endTrigger );
+            self._active = false;
+            self._velocityQueue = [null,null,null,null,null];
+            $this.removeClass( self.options.activeClass );
+
+            // fire user's stop event.
+            self.options.stop(event, self);
+          }
         };
-
-        $(window).bind( this._moveTrigger, storeMoveEvent ); // ... then bind our drag trigger
-
-        (function watchMoveLoop(){
-          if ( !self._active ) return;
-          _pepRequestAnimFrame(watchMoveLoop);
-          if (self._moveEvent !== null ) dragging(self._moveEvent);
-        })($, self, dragging);
-
-
+        $(window).bind( this._endTrigger + " " + this.options.stopEvents, $.fn.pep.stopping );  // ... then bind our stop trigger
       }
     };
 
@@ -258,17 +242,6 @@
       return { x: sumX, y: sumY };
     };
 
-    window._pepRequestAnimFrame = (function(callback) {
-      return  window.requestAnimationFrame       || 
-              window.webkitRequestAnimationFrame || 
-              window.mozRequestAnimationFrame    || 
-              window.oRequestAnimationFrame      || 
-              window.msRequestAnimationFrame     || 
-              function( callback ){
-                window.setTimeout(callback, 1000 / 60);
-              };
-    })();
-
     Pep.prototype._ease = function(){
       $this         = $(this.el);
       var vel       = this._velocity();
@@ -277,7 +250,7 @@
       var x         = ( vel.x > 0 ) ? "+=" + vel.x * mult : "-=" + Math.abs(vel.x) * mult;
       var y         = ( vel.y > 0 ) ? "+=" + vel.y * mult : "-=" + Math.abs(vel.y) * mult;
 
-      // ✪  The CSS3 easing magic  ✪
+      // .  The CSS3 easing magic  .
       $this.css( this._cssEaseHash( this.options.cssEaseDuration, this.options.cssEaseString ) );
       $this.css({ top: y, left: x });
     };
