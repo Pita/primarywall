@@ -234,7 +234,10 @@ function scaleNotePositions2Window()
   {
     if (note)
     {
-      if (notearray[note].x > maxNoteX) maxNoteX = notearray[note].x;
+      if (notearray[note].x > maxNoteX)
+      {
+        maxNoteX = notearray[note].x;
+      }
     }
   }
 
@@ -252,11 +255,10 @@ function scaleNotePositions2Window()
       //var noteguid = notearray[note].guid;
       var x = notearray[note].x * scale;
       var y = notearray[note].y * scale;
-      y = y-50;
+//      y = y-50;
       $('#' + note).animate(
       {
-        left: x,
-        top: y
+        left: x
       });
     }
   }
@@ -269,7 +271,7 @@ function reset()
 {
   if(readOnly !== true)
   {
-    $('.note').pep();
+    $('.note').pep({"constrainToParent":true});
   }
   else{
     showAsReadOnly();
@@ -408,7 +410,7 @@ function newnote(event, dontshow, charCode)
       if ($('#extradropdown').css('display') == 'none')
       {
         $('#editpage').show();
-        $('.note').pep({"boundToParent":true});
+        $('.note').pep({"constrainToParent":true});
         // Here we need some code that sets a function for when the note has finished being dragged
       }
       else
@@ -419,7 +421,7 @@ function newnote(event, dontshow, charCode)
       // make edit page pep
       if(readOnly !== true)
       {
-        $('.note').pep({"boundToParent":true});
+        $('.note').pep({"constrainToParent":true});
         // Make first input box the focus object
         var input = $('#editnotetitle');
         input.focus();
