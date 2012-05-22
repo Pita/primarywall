@@ -89,10 +89,6 @@ exports.handleMessage = function(client, message)
   //Message have always two attributes, type and data
   //type can be handshake, lock, unlock, new, delete, edit, move
 
-  // console.log(client);
-  // console.log("FIN");   
-  console.log(message);
-   
   if(message.type == null)
   {
     throw "Message have no type";
@@ -338,16 +334,11 @@ function handleMove(client, message)
  */
 function broadcastToTheOtherOnTheWall(client, message)
 {
-  // console.log("CLIENT DATA:");
-  // console.log(client);
   var wallid = session2wall[client.id];
   for(i in wall2sessions[wallid])
   {
-//    console.log("JAM");
-    console.log(wall2sessions[wallid][i]);
     if(wall2sessions[wallid][i] != client.id) // broadcast to everyone except the creator
     {
-// console.log("broadcasting");
       socketio.sockets.sockets[wall2sessions[wallid][i]].json.send(message);
     }
   }
