@@ -94,6 +94,8 @@ $(document).ready(function ()
       notearray[obj.data.guid].x = obj.data.x;
       notearray[obj.data.guid].y = obj.data.y;
 
+      obj.data.y = obj.data.y -50;
+
       $("#" + obj.data.guid).animate(
       {
         top: obj.data.y * scale,
@@ -255,7 +257,7 @@ function scaleNotePositions2Window()
       //var noteguid = notearray[note].guid;
       var x = notearray[note].x * scale;
       var y = notearray[note].y * scale;
-//      y = y-50;
+//      y = y-150;
       $('#' + note).animate(
       {
         left: x
@@ -333,9 +335,7 @@ function newnote(event, dontshow, charCode)
     if (currmouseX(event))
     {
       mouseX = event.pageX;
-      // console.log(mouseX);
-      mouseY = event.pageY;
-      // console.log(mouseY);
+      mouseY = event.pageY -50; // bodge fix realistically needs to be relative to container
     }
     else
     {
@@ -410,7 +410,7 @@ function newnote(event, dontshow, charCode)
       if ($('#extradropdown').css('display') == 'none')
       {
         $('#editpage').show();
-        $('.note').pep({"constrainToParent":true});
+//        $('.note').pep({"constrainToParent":true});
         // Here we need some code that sets a function for when the note has finished being dragged
       }
       else
@@ -421,7 +421,7 @@ function newnote(event, dontshow, charCode)
       // make edit page pep
       if(readOnly !== true)
       {
-        $('.note').pep({"constrainToParent":true});
+//        $('.note').pep({"constrainToParent":true});
         // Make first input box the focus object
         var input = $('#editnotetitle');
         input.focus();
@@ -723,7 +723,7 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
   if(readOnly !== true){
     $('.note').pep(
     {
-      boundToParent:true,
+      constrainToParent: true,
       start: function (event, ui)
       {
         var zindex = $("#" + event.target.id).css("z-index");
@@ -834,7 +834,6 @@ function newpost(editnotetitle, editnotecontents, editnotename, mouseX, mouseY, 
           $('#transoverlay').fadeOut('slow');
         }
       },
-      containment: "#values"
     });
   }
   else{ // if it is readonly

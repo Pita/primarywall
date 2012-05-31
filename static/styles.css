@@ -97,7 +97,7 @@ padding-right:10px;
 
 #values
 {
-position:absolute;
+position:absolute !important;
 left:0px;
 right:0px;
 top:50px;
