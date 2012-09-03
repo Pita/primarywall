@@ -1,12 +1,12 @@
 REQUIREMENTS
-NodeJS - http://nodejs.org/ [apt-get install nodejs]
-MySQL http://mysql.com/
+NodeJS: http://nodejs.org/ [apt-get install nodejs]
+MySQL: http://mysql.com/ [apt-get install mysql-server]
 
 INSTALLATION
 Debian/Ubuntu:
 1. # apt-get install mysql-server libssl-dev build-essential
 2. install the latest nodejs from http://nodejs.org or apt-get install nodejs
-3. # npm install socket.io mysql
+3. # npm install socket.io mysql bcrypt
 4. Setup a mysql database and add the table 'note' with the sql 'primarywall.sql'
 5. Copy MySQL_config.js.tpl to MySQL_config.js and set your mysql settings
 6. If you want to use bit.ly or google analytics, set your bit.ly or google-analytics key in /static/js/google-analytics.js and /static/js/bitly.js. To do that, you have to copy the .tpl file
@@ -16,7 +16,7 @@ Debian/Ubuntu:
 CentOS/RHEL:
 1. # yum install mysql-server libssl-dev && yum groupinstall "Development Tools"
 2. install the latest nodejs from http://nodejs.org or yum install nodejs
-3. # npm install socket.io mysql
+3. # npm install socket.io mysql bcrypt
 4. Setup a mysql database and add the table 'note' with the sql 'primarywall.sql'
 5. Copy MySQL_config.js.tpl to MySQL_config.js and set your mysql settings
 6. If you want to use bit.ly or google analytics, set your bit.ly or google-analytics key in /static/js/google-analytics.js and /static/js/bitly.js. To do that, you have to copy the .tpl file
@@ -24,9 +24,10 @@ CentOS/RHEL:
 8. Connect to SERVER-IP-ADDRESS port 80 in your web browser IE http://192.168.1.2
 
 Windows:
-1. Download & Install nodejs, python(>2.5 & <3) & git, add a path for python to your PATH environment variable.
+1. Download & Install nodejs, mysql server, python(>2.5 & <3) & git, add a path for python to your PATH environment variable.
 2. Start up a command line and create a home for PrimaryWall
 3. # git clone git://github.com/Pita/primarywall.git
+4. npm install socket.io mysql bcrypt
 4. Setup a mysql database and add the table 'note' with the sql 'primarywall.sql'
 5. Copy MySQL_config.js.tpl to MySQL_config.js and set your mysql settings
 6. If you want to use bit.ly or google analytics, set your bit.ly or google-analytics key in /static/js/google-analytics.js and /static/js/bitly.js. To do that, you have to copy the .tpl file
