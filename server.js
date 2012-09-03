@@ -1,56 +1,54 @@
-/*
- * Copyright 2011 Primary Technology Ltd
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 // Simple Node & Socket server
-var http = require('http')
-  , url = require('url')
-  , fs = require('fs')
-  , io = require('socket.io')
-  , sys = require('sys')
-  , server;
+var http = require('http');
+var url = require('url');
+var fs = require('fs');
+var io = require('socket.io');
+var sys = require('sys');
+var ajaxHandler = require('./ajaxHandler');
+var Cookies = require("cookies");
+var userManager = require("./UserManager");
+
+var server;
 
 server = http.createServer(function(req, res){
-  var path = url.parse(req.url).pathname;
-  
-  if(path == "/")
+  try
   {
-    sendFile(res, path, __dirname + "/static/index.html");
-  }
-  else if(path.substring(0,"/static".length) == "/static")
-  {
-    sendFile(res, path, __dirname + path);
-  }
-  else if(path == "/newwall")
-  {
-    sendRedirect(res, path, "/" + randomWallName());
-  }
-  else
-  {
-    if(path.lastIndexOf("/")==0)
+    var path = url.parse(req.url).pathname;
+    
+    if(path == "/")
     {
-      sendFile(res, path, __dirname + "/static/wall.html");
+      sendFile(res, path, __dirname + "/static/index.html");
+    }
+    else if(path == "/static/login.html")
+    {
+      handleLoginRequest(req, res);
+    }
+    else if(path.substring(0,"/static".length) == "/static")
+    {
+      sendFile(res, path, __dirname + path);
+    }
+    else if(path.substring(0,"/ajax/".length) == "/ajax/")
+    {
+      ajaxHandler.handle(req, res, path);
+    }
+    else if(path == "/newwall")
+    {
+      sendRedirect(res, path, "/" + randomWallName());
     }
     else
     {
-      send404(res, path);
+      if(path.lastIndexOf("/")==0)
+      {
+        sendFile(res, path, __dirname + "/static/wall.html");
+      }
+      else
+      {
+        send404(res, path);
+      }
     }
-  }
+  }catch(e){errorlog(e)}
 });
-server.listen(80);
+server.listen(8000);
 
 function randomWallName() {
 	var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
@@ -94,6 +92,39 @@ function sendFile(res, reqPath, path)
   });
 }
 
+function handleLoginRequest(req, res)
+{
+  var path = url.parse(req.url).pathname;
+
+  //extract the session cookie
+  var cookies = new Cookies(req, res);
+  var sessionId = cookies.get("session");
+  
+  //if there is no sessionId, send the static file
+  if(sessionId == null)
+  {
+    sendFile(res, path, __dirname + "/static/login.html");
+  }
+  //else we should check what we know about this session
+  else
+  {
+    userManager.getUserSession(sessionId, function(success, sessionObject){
+      //the database don't like this cookie
+      if(!success || sessionObject == null)
+      {
+        //delete cookie and serve login
+        cookies.set("session", "", new Date(0));
+        sendFile(res, path, __dirname + "/static/login.html");
+      }
+      else
+      {
+        //redirect the user to the logedin page
+        sendRedirect(res, "/static/loggedin.html", "http://" + sessionObject.domain + ".primarywall.com/static/loggedin.html")
+      }
+    });
+  }
+}
+
 function send404(res, reqPath)
 {
   res.writeHead(404);
@@ -111,40 +142,51 @@ function sendRedirect(res, reqPath, location)
   requestLog(302, reqPath, "-> " + location);
 }
 
-function requestLog(code, path, desc)
+function requestLog(code, path, desc, ip)
 {
-  console.log(code +", " + path + ", " + desc);
+  if(path != "/")
+    console.log(new Date().toUTCString() + ", " + code +", " + path + ", " + desc);
 }
 
-//var io = io.listen(server);
-var io = require('socket.io').listen(server)
-io.enable('browser client minification');  // send minified client
-io.enable('browser client etag');          // apply etag caching logic based on version number
-io.enable('browser client gzip');          // gzip the file
-io.set("polling duration", 10);            // allow for long polling
-io.set('log level', 1);                    // reduce logging
-
+var io = io.listen(server);
 var messageHandler = require("./MessageHandler");
 messageHandler.setSocketIO(io);
 
-io.sockets.on('connection', function(client){
+io.on('connection', function(client){
   try{
     messageHandler.handleConnect(client);
-  }catch(e){console.error(e);}
+  }catch(e){console.error(errorlog(e));}
   
   client.on('message', function(message){
     try{
       messageHandler.handleMessage(client, message);
-    }catch(e){console.error(e.message);}
+    }catch(e){console.error(errorlog(e));}
   });
 
   client.on('disconnect', function(){
     try{
       messageHandler.handleDisconnect(client);
-    }catch(e){console.error(e);}
+    }catch(e){console.error(errorlog(e));}
   });
 });
 
+function errorlog(e)
+{
+  var timeStr = new Date().toUTCString() + ": ";
 
-
-
+  if(typeof e == "string")
+  {
+    console.error(timeStr + e);
+    console.log("ERROR: " + timeStr + e);
+  }
+  else if(e.stack != null)
+  {
+    console.error(timeStr + e.stack);
+    console.log("ERROR: " + timeStr + e.stack);
+  }
+  else
+  {
+    console.error(timeStr + JSON.stringify(e));
+    console.log("ERROR: " + timeStr + JSON.stringify(e));
+  }
+}
