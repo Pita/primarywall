@@ -1,26 +1,3 @@
---
--- Copyright 2011 Primary Technology Ltd
---
--- This program is free software: you can redistribute it and/or modify
--- it under the terms of the GNU Affero General Public License as
--- published by the Free Software Foundation, either version 3 of the
--- License, or (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU Affero General Public License for more details.
---
--- You should have received a copy of the GNU Affero General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
--- 
-
---
--- If you are doing an upgrade from V<1 you will need to do ALTER table note add column color varchar(10)
--- Before you run that command look to see if a color column exists in note first.
---
-
-
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 
@@ -30,8 +7,20 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `wall`
+-- Database: `primarywall`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `domain`
+--
+
+CREATE TABLE IF NOT EXISTS `domain` (
+  `domainID` varchar(99) NOT NULL COMMENT 'The subdomain IE chocolate',
+  `JSON` text NOT NULL COMMENT 'The Owner and Members of the subdomain',
+  PRIMARY KEY (`domainID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -40,17 +29,99 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 --
 
 CREATE TABLE IF NOT EXISTS `note` (
-  `guid` varchar(50) NOT NULL COMMENT 'guid of a note',
-  `title` varchar(30) NOT NULL COMMENT 'title given to the note',
-  `content` varchar(200) NOT NULL COMMENT 'contents of the note',
-  `author` varchar(20) NOT NULL COMMENT 'author of the note',
-  `x` int(4) NOT NULL COMMENT 'x coordinate of the note',
-  `y` int(4) NOT NULL COMMENT 'y coordinate of the note',
-  `wallid` varchar(80) NOT NULL COMMENT 'id of the wall this note exists on',
-  `color` varchar(10) NOT NULL COMMENT 'the color of the note',
-  PRIMARY KEY (`guid`),
-  KEY `wallid` (`wallid`)
+  `guid` varchar(99) NOT NULL,
+  `JSON` text NOT NULL,
+  PRIMARY KEY (`guid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
 
+--
+-- Table structure for table `pt_emails`
+--
 
+CREATE TABLE IF NOT EXISTS `pt_emails` (
+  `id` varchar(20) NOT NULL,
+  `subject` varchar(100) NOT NULL,
+  `content` text NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pt_subscription`
+--
+
+CREATE TABLE IF NOT EXISTS `pt_subscription` (
+  `domain` varchar(200) NOT NULL,
+  `email` varchar(200) NOT NULL,
+  `welcome_email_sent` int(1) NOT NULL,
+  `week_email_sent` int(1) NOT NULL,
+  `month_email_sent` int(1) NOT NULL,
+  `expired_email_sent` int(1) NOT NULL,
+  `paid` int(1) NOT NULL,
+  `deleted` varchar(200) NOT NULL,
+  `subscription_date` date NOT NULL,
+  `expires_date` date NOT NULL,
+  PRIMARY KEY (`domain`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `registration`
+--
+
+CREATE TABLE IF NOT EXISTS `registration` (
+  `registrationID` varchar(99) NOT NULL,
+  `JSON` text NOT NULL,
+  PRIMARY KEY (`registrationID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reset`
+--
+
+CREATE TABLE IF NOT EXISTS `reset` (
+  `resetID` varchar(20) NOT NULL,
+  `JSON` text NOT NULL,
+  PRIMARY KEY (`resetID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `session`
+--
+
+CREATE TABLE IF NOT EXISTS `session` (
+  `sessionID` varchar(99) NOT NULL,
+  `JSON` text NOT NULL,
+  PRIMARY KEY (`sessionID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user`
+--
+
+CREATE TABLE IF NOT EXISTS `user` (
+  `UserID` varchar(99) NOT NULL COMMENT 'The User ID',
+  `JSON` text NOT NULL COMMENT 'JSON values about this user',
+  PRIMARY KEY (`UserID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wall`
+--
+
+CREATE TABLE IF NOT EXISTS `wall` (
+  `wallID` varchar(80) NOT NULL COMMENT 'The ID of the Wall',
+  `JSON` text NOT NULL COMMENT 'The JSON data about this wall',
+  PRIMARY KEY (`wallID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
