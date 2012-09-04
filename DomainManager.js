@@ -1,4 +1,4 @@
-var client = require("./MySQL").client;
+var client = require('mysql').client;
 var async = require("async");
 
 /*********************************/

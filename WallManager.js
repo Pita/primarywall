@@ -1,5 +1,5 @@
-var client = require("./MySQL").client;
-var async = require("async");
+var client = require('mysql').client;
+var async = require('async');
 var bcrypt = require('bcrypt');
 
 /*********************************/
