@@ -1,8 +1,19 @@
-"use strict";
+/*********************************
+* A script to migrate PrimaryWall notes from the old relational format to a format where each value is stored as a JSON value IE {"x":"1","guid":"blabla"}... 
+**********************************/
 
-var client = require("mysql").client;
+"use strict";
 var async = require("async");
 
+/*********************************/
+/* Build up the MySQL Connection */
+/*********************************/
+var config = require("./MySQL_config");
+var client = require('mysql').createClient({'host':config.host,'port':3306,'user':config.user,'password':config.password,'database':config.database});
+
+/*********************************/
+/* Do the process                */
+/*********************************/
 async.waterfall([
   //Select everything from the old table
   function (callback)
