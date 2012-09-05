@@ -7,14 +7,13 @@
   "dependencies"   : {
                       "socket.io"           : "0.9.10",
                       "mysql"               : "2.0.0-alpha3",
-                      
+                      "bcrypt" : ">=1.0.0",
+                      "async" : ">=0.1.22",
+                      "cookies" : ">=0.3.1",
+                      "mailer" : ">=0.1.20"
                      },
   "engines"        : { "node" : ">=0.6.0",
                        "npm"  : ">=1.0",
-                       "bcrypt" : ">=1.0.0",
-                       "async" : ">=0.1.22",
-                       "cookies" : ">=0.3.1",
-                       "mailer" : ">=0.1.20"
                      }, 
   "version"        : "1.0.0"
 }
